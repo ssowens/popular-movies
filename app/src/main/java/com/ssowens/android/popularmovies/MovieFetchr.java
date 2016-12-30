@@ -23,8 +23,13 @@ public class MovieFetchr {
     private static final String TMDB_RESULTS = "results";
     private static final String TMDB_POSTER_PATH = "poster_path";
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
-    private static final String MOVIE_URL = "http://api.themoviedb.org/3/movie/popular?api_key=f804facb811415aff9fb6ec12310e4a6";
+    public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
+            ".org/3/movie/popular?api_key=f804facb811415aff9fb6ec12310e4a6";
+    public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
+            ".org/3/movie/top_rated?api_key=f804facb811415aff9fb6ec12310e4a6";
+
     private String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
+
 
     /**
      * This method fetches raw data from a URL and returns it as an array of bytes.
@@ -68,12 +73,16 @@ public class MovieFetchr {
     }
 
 
-    public ArrayList<MovieItem> fetchItems() {
+    public ArrayList<MovieItem> fetchItems(String movie_url) {
 
         ArrayList<MovieItem> items = new ArrayList<>();
+
         Log.i(TAG, "Entering fetchItems");
+
+
+
         try {
-            String url = Uri.parse(MOVIE_URL).toString();
+            String url = Uri.parse(movie_url).toString();
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);

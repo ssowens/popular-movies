@@ -1,5 +1,20 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="action_settings">Settings</string>
+    <string name="title_settings_activity">Settings</string>
+    <string name="pref_sort_movies_sort_order">Movies Sort Order</string>
+    <string name="pref_sort_most_popular">By Most Popular</string>
+    <string name="pref_sort_top_rate">By Top Rated</string>
+    <string name="pref_sort_order_label">Sort Order:</string>
+    <string name="pref_sort_default" translatable="true">By Most Popular</string>
+    <string name="pref_key_movies_settings" translatable="false">pref_movies</string>
+    <string name="pref_movies_key" translatable="false">movies</string>
+    <string name="movie_overview">Movie Overview</string>
+    <string name="movie_image">Movie Image</string>
+    <string name="movie_title">Original Movie Title</string>
+    <string name="movie_vote_average">Movie Vote Average</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
 
