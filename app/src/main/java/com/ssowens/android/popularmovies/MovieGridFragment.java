@@ -31,14 +31,13 @@ public class MovieGridFragment extends Fragment {
 
     private static final String TAG = MovieGridFragment.class.getSimpleName();
 
+    private static final String POPULAR_MOVIES_KEY = "0";
 
     private GridView mGridView;
     private ProgressBar mProgressBar;
     private GridViewAdapter mGridAdapter;
-    private ArrayList<MovieItem> mGridData = new ArrayList<>();
-    //public String mMoviesSelection = POPULAR_MOVIE_URL;
+    public ArrayList<MovieItem> mGridData = new ArrayList<>();
     public ActionBar actionBar;
-    public static final String EXTRA_DATA = "com.example.android.sunshine.app.DATA";
 
     public static MovieGridFragment newInstance() {
 
@@ -50,7 +49,6 @@ public class MovieGridFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-
         // Set this option to indicate that the fragment has a menu events
         setHasOptionsMenu(true);
 
@@ -59,7 +57,6 @@ public class MovieGridFragment extends Fragment {
 
         // This call starts the AsyncTask which will start a background thread
         // and kick off doInBackground().
-
         new FetchItemsTask().execute();
     }
 
@@ -77,17 +74,22 @@ public class MovieGridFragment extends Fragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(),
-                        "Item Clicked: " + position, Toast.LENGTH_SHORT).show();
 
-                String movieItem = mGridAdapter.getItem(position).toString();
+                // Get the object at the clicked position. Will use later
+                MovieItem item = (MovieItem) parent.getItemAtPosition(position);
 
-                //   Need a Bundel
-                Intent detailIntent = new Intent(getActivity(), MovieDetailActivity.class)
-                        .putExtra(EXTRA_DATA, movieItem);
-                startActivity(detailIntent);
-
-
+                String imageUrl = item.getImage();
+                String movieTitle = item.getTitle();
+                String releaseDate = item.getReleaseDate();
+                String voteAverage = item.getVoteAverage();
+                String overview = item.getOverView();
+                Intent intent = MovieDetailActivity.newIntent(getActivity(),
+                        imageUrl,
+                        movieTitle,
+                        releaseDate,
+                        voteAverage,
+                        overview);
+                startActivity(intent);
             }
         });
 
@@ -99,12 +101,14 @@ public class MovieGridFragment extends Fragment {
 
     private class FetchItemsTask extends AsyncTask<Void, Void, ArrayList<MovieItem>> {
 
+
         private final String LOG_TAG = FetchItemsTask.class.getSimpleName();
 
         @Override
         protected ArrayList<MovieItem> doInBackground(Void... params) {
 
             Log.i(TAG, "doInBackground");
+
             String movie_url;
 
             // Get the movie sort order
@@ -112,7 +116,7 @@ public class MovieGridFragment extends Fragment {
             String moviesSortOrder = sharedPref.getString(getString(R.string.pref_movies_key),
                     getString(R.string.pref_movies_key));
 
-            if (moviesSortOrder.equals("0")) {
+            if (moviesSortOrder.equals(POPULAR_MOVIES_KEY)) {
                 movie_url = POPULAR_MOVIE_URL;
             } else {
                 movie_url = TOP_RATED_MOVIE_URL;
@@ -151,6 +155,5 @@ public class MovieGridFragment extends Fragment {
         super.onStart();
         updateMovies();
     }
-
 
 }

@@ -1,0 +1,62 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 xmlns:tools="http://schemas.android.com/tools"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 tools:context="com.ssowens.android.popularmovies.MovieDetailFragment">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:layout_gravity="center_vertical"
+                      android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/movie_title_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@color/colorPrimary"
+                android:gravity="center_vertical"
+                android:hint="@string/movie_title"
+                android:paddingLeft="20dp"
+                android:textColor="@android:color/white"
+                android:textSize="30sp"/>
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="200dp"
+                android:layout_height="350dp"
+                android:layout_gravity="left"
+                android:hint="@string/movie_image"
+                android:paddingBottom="16dp"
+                android:paddingLeft="60dp"
+                android:paddingTop="10dp"
+                android:scaleType="centerCrop"/>
+
+
+            <TextView
+                android:id="@+id/movie_overview_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/movie_overview"/>
+
+            <TextView
+                android:id="@+id/movie_vote_average_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="@string/movie_vote_average"/>
+
+            <TextView
+                android:id="@+id/movie_release_date_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="@string/movie_vote_average"/>
+        </LinearLayout>
+    </FrameLayout>
+</ScrollView>

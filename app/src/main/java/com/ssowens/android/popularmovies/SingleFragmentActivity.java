@@ -14,7 +14,6 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
     protected abstract Fragment createFragment();
 
     /**
-     *
      * @param savedInstanceState
      */
     @Override
@@ -31,6 +30,5 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
                     .add(R.id.fragment_container, fragment)
                     .commit();
         }
-
     }
 }

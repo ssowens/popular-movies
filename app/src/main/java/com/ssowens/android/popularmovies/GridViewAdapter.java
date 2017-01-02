@@ -61,7 +61,11 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
         }
 
         MovieItem item = mGridMovies.get(position);
-        Picasso.with(mContext).load(item.getImage()).into(imageView);
+        Picasso.with(mContext)
+                .load(item.getImage())
+                .placeholder(R.drawable.androidnopixavail)
+                .error(R.drawable.errorimage)
+                .into(imageView);
 
         return rootView;
     }

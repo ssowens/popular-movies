@@ -1,57 +1,78 @@
 package com.ssowens.android.popularmovies;
 
+import java.util.UUID;
+
 /**
  * Created by Sheila Owens on 12/11/16.
  */
 
-public class MovieItem {
+class MovieItem {
 
+    private UUID mId;
+    private int moviePosition;
     private String image;
     private String title;
     private String overView;
     private String voteAverage;
 
-    public MovieItem() {
-        super();
+    MovieItem() {
+        mId = UUID.randomUUID();
     }
 
-    public String getImage() {
+    public int getMoviePosition() {
+        return moviePosition;
+    }
+
+    public void setMoviePosition(int moviePosition) {
+        this.moviePosition = moviePosition;
+    }
+
+    public UUID getId() {
+        return mId;
+    }
+
+    public void setId(UUID id) {
+        mId = id;
+    }
+
+
+    String getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    void setImage(String image) {
         this.image = image;
     }
 
-    public String getTitle() {
+    String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    void setTitle(String title) {
         this.title = title;
     }
 
-    public String getOverView() {
+    String getOverView() {
         return overView;
     }
 
-    public void setOverView(String overView) {
+    void setOverView(String overView) {
         this.overView = overView;
     }
 
-    public String getVoteAverage() {
+    String getVoteAverage() {
         return voteAverage;
     }
 
-    public void setVoteAverage(String voteAverage) {
+    void setVoteAverage(String voteAverage) {
         this.voteAverage = voteAverage;
     }
 
-    public String getReleaseDate() {
+    String getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
 

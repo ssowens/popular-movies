@@ -1,12 +1,16 @@
 package com.ssowens.android.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends SingleFragmentActivity {
 
@@ -19,12 +23,13 @@ public class MainActivity extends SingleFragmentActivity {
 
         // Set this option for defaults in the Settings screen
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.i(TAG, "onCreateOptionsMenu()");
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -49,10 +54,19 @@ public class MainActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return MovieGridFragment.newInstance();
+        if (isOnline()) {
+            Fragment fragment = MovieGridFragment.newInstance();
+            return fragment;
+        } else {
+            Toast.makeText(this, "No Internet Service", Toast.LENGTH_SHORT).show();
+            return null;
+        }
     }
 
-
-
+    public boolean isOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
 }
-
