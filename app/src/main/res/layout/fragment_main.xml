@@ -16,7 +16,7 @@
         android:drawSelectorOnTop="true"
         android:focusable="true"
         android:gravity="center"
-        android:numColumns="auto_fit"
+        android:numColumns="2"
         android:stretchMode="columnWidth"
         android:verticalSpacing="1dp"/>
 

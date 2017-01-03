@@ -19,14 +19,6 @@ class MovieItem {
         mId = UUID.randomUUID();
     }
 
-    public int getMoviePosition() {
-        return moviePosition;
-    }
-
-    public void setMoviePosition(int moviePosition) {
-        this.moviePosition = moviePosition;
-    }
-
     public UUID getId() {
         return mId;
     }

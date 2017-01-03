@@ -74,8 +74,8 @@ public class MovieDetailFragment extends Fragment {
         Picasso.with(getContext()).load(mImageUrl).into(mImage);
         mTitle.setText(mMovieTitleStr);
         mOverview.setText(mOverviewStr);
-        mVoteAverage.setText("Vote Average: " + mVoteAverateStr);
-        mReleasteDate.setText("Release Date: " + mReleaseDateStr);
+        mVoteAverage.setText(mVoteAverateStr);
+        mReleasteDate.setText(mReleaseDateStr);
         return view;
     }
 }
