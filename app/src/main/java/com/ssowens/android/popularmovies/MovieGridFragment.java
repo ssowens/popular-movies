@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import static com.ssowens.android.popularmovies.MovieFetchr.FAVORITES_URL;
 import static com.ssowens.android.popularmovies.MovieFetchr.POPULAR_MOVIE_URL;
 import static com.ssowens.android.popularmovies.MovieFetchr.TOP_RATED_MOVIE_URL;
 import static com.ssowens.android.popularmovies.R.id.gridView;
@@ -32,6 +33,8 @@ public class MovieGridFragment extends Fragment {
     private static final String TAG = MovieGridFragment.class.getSimpleName();
 
     private static final String POPULAR_MOVIES_KEY = "0";
+    private static final String TOP_RATED_MOVIES_KEY = "1";
+    private static final String FAVORITE_MOVIES_KEY = "2";
 
     private GridView mGridView;
     private ProgressBar mProgressBar;
@@ -116,10 +119,19 @@ public class MovieGridFragment extends Fragment {
             String moviesSortOrder = sharedPref.getString(getString(R.string.pref_movies_key),
                     getString(R.string.pref_movies_key));
 
-            if (moviesSortOrder.equals(POPULAR_MOVIES_KEY)) {
-                movie_url = POPULAR_MOVIE_URL;
-            } else {
-                movie_url = TOP_RATED_MOVIE_URL;
+            switch (moviesSortOrder) {
+                case POPULAR_MOVIES_KEY:
+                    movie_url = POPULAR_MOVIE_URL;
+                    break;
+                case TOP_RATED_MOVIES_KEY:
+                    movie_url = TOP_RATED_MOVIE_URL;
+                    break;
+                case FAVORITE_MOVIES_KEY:
+                    movie_url = FAVORITES_URL;
+                    break;
+                default:
+                    movie_url = TOP_RATED_MOVIE_URL;
+                    break;
             }
 
             mGridData = new MovieFetchr().fetchItems(movie_url);

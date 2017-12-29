@@ -3,9 +3,11 @@
     <string-array name="movies">
         <item>@string/pref_sort_most_popular</item>
         <item>@string/pref_sort_top_rate</item>
+        <item>@string/pref_sort_favorites</item>
     </string-array>
     <string-array name="sortData">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
 </resources>

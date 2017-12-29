@@ -32,6 +32,10 @@ public class MovieFetchr {
             ".org/3/movie/popular?api_key=" + API_KEY;
     public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/top_rated?api_key=" + API_KEY;
+    public static final String FAVORITES_URL = "http://api.themoviedb" +
+            ".org/3/movie/top_rated?api_key=" + API_KEY;
+    public static final String TRAILER_URL = "http://api.themoviedb" +
+            ".org/3/movie/?api_key=" + API_KEY + "/videos";
 
     /**
      * This method fetches raw data from a URL and returns it as an array of bytes.
@@ -129,6 +133,9 @@ public class MovieFetchr {
 
             // Get the release date
             mMovie.setReleaseDate(movieObject.getString(TMDB_RELEASE_DATE));
+
+            // Get the reviews
+
 
             movies.add(mMovie);
         }

@@ -6,6 +6,7 @@
     <string name="pref_sort_movies_sort_order">Movies Sort Order</string>
     <string name="pref_sort_most_popular">By Most Popular</string>
     <string name="pref_sort_top_rate">By Top Rated</string>
+    <string name="pref_sort_favorites">By Favorites</string>
     <string name="pref_sort_order_label">Sort Order:</string>
     <string name="pref_top_related_default">1</string>
     <string name="pref_key_movies_settings" translatable="false">pref_movies</string>
