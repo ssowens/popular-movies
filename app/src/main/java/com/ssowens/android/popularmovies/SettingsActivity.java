@@ -20,9 +20,8 @@ public class SettingsActivity extends PreferenceActivity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         Log.i(TAG, "onCreate()");
+        super.onCreate(savedInstanceState);
 
         // Set the default values when this method has never been called.
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);

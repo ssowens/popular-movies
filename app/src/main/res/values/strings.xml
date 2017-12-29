@@ -16,7 +16,7 @@
     <string name="movie_title">Original Movie Title</string>
     <string name="movie_vote_average">Movie Vote Average</string>
     <string name="movie_release_date">Movie Release Date</string>
-    <string name="title_activity_detail">MovieDetail</string>
+    <string name="title_activity_detail">Movie Detail</string>
     <string name="trailers_label">Trailers:</string>
 
 </resources>
