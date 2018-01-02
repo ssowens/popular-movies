@@ -36,11 +36,11 @@ public class MovieGridFragment extends Fragment {
     private static final String TOP_RATED_MOVIES_KEY = "1";
     private static final String FAVORITE_MOVIES_KEY = "2";
 
-    private GridView mGridView;
-    private ProgressBar mProgressBar;
-    private GridViewAdapter mGridAdapter;
-    public ArrayList<MovieItem> mGridData = new ArrayList<>();
+    private ProgressBar progressBar;
+    private GridViewAdapter gridAdapter;
+    public ArrayList<MovieItem> gridData = new ArrayList<>();
     public ActionBar actionBar;
+    private String title;
 
     public static MovieGridFragment newInstance() {
 
@@ -51,6 +51,8 @@ public class MovieGridFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        ActionBar actionBar = activity.getSupportActionBar();
 
         // Set this option to indicate that the fragment has a menu events
         setHasOptionsMenu(true);
@@ -72,8 +74,8 @@ public class MovieGridFragment extends Fragment {
         final GridView mGridView = (GridView) rootView.findViewById(gridView);
 
         // Get a reference to the GridView, and attach this adapter to it.
-        mGridAdapter = new GridViewAdapter(getActivity(), mGridData);
-        mGridView.setAdapter(mGridAdapter);
+        gridAdapter = new GridViewAdapter(getActivity(), gridData);
+        mGridView.setAdapter(gridAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -96,8 +98,8 @@ public class MovieGridFragment extends Fragment {
             }
         });
 
-        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        mProgressBar.setVisibility(View.VISIBLE);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
         return rootView;
     }
@@ -122,20 +124,24 @@ public class MovieGridFragment extends Fragment {
             switch (moviesSortOrder) {
                 case POPULAR_MOVIES_KEY:
                     movie_url = POPULAR_MOVIE_URL;
+                    title = getString(R.string.pref_sort_most_popular);
                     break;
                 case TOP_RATED_MOVIES_KEY:
                     movie_url = TOP_RATED_MOVIE_URL;
+                    title = getString(R.string.pref_sort_top_rate);
                     break;
                 case FAVORITE_MOVIES_KEY:
                     movie_url = FAVORITES_URL;
+                    title = getString(R.string.pref_sort_favorites);
                     break;
                 default:
                     movie_url = TOP_RATED_MOVIE_URL;
+                    title = getString(R.string.pref_sort_top_rate);
                     break;
             }
 
-            mGridData = new MovieFetchr().fetchItems(movie_url);
-            return mGridData;
+            gridData = new MovieFetchr().fetchItems(movie_url);
+            return gridData;
         }
 
         @Override
@@ -145,21 +151,23 @@ public class MovieGridFragment extends Fragment {
             super.onPostExecute(gridItems);
             Log.v(TAG, "gridItems = " + gridItems.size());
 
-            mGridAdapter.clear();
+            gridAdapter.clear();
             Log.v(TAG, "gridItems = " + gridItems.size());
 
             if (gridItems != null) {
-                mGridAdapter.addAll(gridItems);
+                gridAdapter.addAll(gridItems);
+                gridAdapter.setGridData(gridItems);
             } else {
                 Toast.makeText(getActivity(), "Failed to fetch data!", Toast.LENGTH_SHORT).show();
             }
-            mProgressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
         }
     }
 
     private void updateMovies() {
         FetchItemsTask moviesTask = new FetchItemsTask();
         moviesTask.execute();
+        actionBar.setTitle(title);
     }
 
     @Override

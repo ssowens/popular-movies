@@ -1,7 +1,7 @@
 package com.ssowens.android.popularmovies;
 
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -9,11 +9,11 @@ import android.view.MenuItem;
  * Created by Sheila Owens on 12/18/16.
  */
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AppCompatActivity {
 
 
     public final static String TAG = "SettingsActivity";
-    public static final String PREF_MOVIES_KEY = "pref_movies_key";
+    public static final String PREF_MOVIES_KEY = "movies";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,7 +21,7 @@ public class SettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
 
         this.setContentView(R.layout.popular_movies_settings);
-//        this.getActionBar().setDisplayHomeAsUpEnabled(true);
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 //        // Set the default values when this method has never been called.
 //        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
