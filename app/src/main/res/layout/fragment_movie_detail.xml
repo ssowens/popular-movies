@@ -9,14 +9,15 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
 
         <TextView
             android:id="@+id/movie_title_text_view"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="#008675"
             android:layout_gravity="center_vertical"
+            android:background="#008675"
             android:paddingLeft="20dp"
             android:textColor="@color/colorText"
             android:textSize="@dimen/text_size"
@@ -44,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/image"
+                tools:text="User Rating"
                 android:hint="@string/movie_vote_average"
                 android:paddingBottom="32dp"
                 android:paddingLeft="20dp"/>
@@ -55,6 +57,7 @@
                 android:layout_below="@id/movie_vote_average_text_view"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/image"
+                tools:text="Release Date"
                 android:hint="@string/movie_release_date"
                 android:paddingLeft="20dp"/>
 
@@ -84,18 +87,40 @@
             android:paddingTop="5dp"
             android:text="@string/trailers_label"/>
 
-        <VideoView
-            android:id="@+id/trailerVideo"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/start_video_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="32dp"
+                android:paddingBottom="8dp"
+                android:text="@string/play_video"/>
+
+            <TextView
+                android:id="@+id/trailer_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Trailer 1"/>
+
+            <VideoView
+                android:id="@+id/youtube_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
 
         <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:paddingLeft="60dp"/>
+            android:background="@android:color/darker_gray"/>
 
-                                                                                                                                                                                             </LinearLayout>
+    </LinearLayout>
 
 </ScrollView>
 

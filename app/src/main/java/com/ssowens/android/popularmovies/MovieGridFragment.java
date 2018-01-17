@@ -88,12 +88,16 @@ public class MovieGridFragment extends Fragment {
                 String releaseDate = item.getReleaseDate();
                 String voteAverage = item.getVoteAverage();
                 String overview = item.getOverView();
+                String trailer = item.getTrailer();
+                String movieId = item.getMovieId();
                 Intent intent = MovieDetailActivity.newIntent(getActivity(),
                         imageUrl,
                         movieTitle,
                         releaseDate,
                         voteAverage,
-                        overview);
+                        overview,
+                        trailer,
+                        movieId);
                 startActivity(intent);
             }
         });

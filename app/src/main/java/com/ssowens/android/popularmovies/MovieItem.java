@@ -4,6 +4,7 @@ import java.util.UUID;
 
 /**
  * Created by Sheila Owens on 12/11/16.
+ * Updated by Sheila Owens on 1/14/18
  */
 
 class MovieItem {
@@ -14,6 +15,8 @@ class MovieItem {
     private String title;
     private String overView;
     private String voteAverage;
+    private String trailer;
+    private String movieId;
 
     MovieItem() {
         mId = UUID.randomUUID();
@@ -42,6 +45,22 @@ class MovieItem {
 
     void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(String movieId) {
+        this.movieId = movieId;
+    }
+
+    public String getTrailer() {
+        return trailer;
+    }
+
+    public void setTrailer(String trailer) {
+        this.trailer = trailer;
     }
 
     String getOverView() {

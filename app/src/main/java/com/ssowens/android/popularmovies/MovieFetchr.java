@@ -30,12 +30,21 @@ public class MovieFetchr {
     private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
     public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
+//    public static final String POPULAR_MOVIE_URL = "https://api.themoviedb" +
+//            ".org/3/discover/movie?api_key=" + API_KEY + "&sort_by=popularity.desc";
+
     public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/top_rated?api_key=" + API_KEY;
+
+//    public static final String TOP_RATED_MOVIE_URL = "https://api.themoviedb" +
+//            ".org/3/discover/movie?api_key=" + API_KEY + "&sort_by=vote_average.desc";
+
     public static final String FAVORITES_URL = "http://api.themoviedb" +
             ".org/3/movie/top_rated?api_key=" + API_KEY;
     public static final String TRAILER_URL = "http://api.themoviedb" +
-            ".org/3/movie/?api_key=" + API_KEY + "/videos";
+            ".org/3/movie/?api_key=" + API_KEY + "?id=" + "/videos";
+    public static final String REVIEWS = "http://api.themoviedb" +
+            ".org/3/movie/?api_key=" + API_KEY + "/reviews";
 
     /**
      * This method fetches raw data from a URL and returns it as an array of bytes.

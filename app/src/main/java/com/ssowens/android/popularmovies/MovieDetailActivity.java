@@ -8,10 +8,16 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
 
 public class MovieDetailActivity extends SingleFragmentActivity {
 
     public final static String TAG = "MovieDetailActivity";
+    private static final int REQ_START_STANDALONE_PLAYER = 1;
+    private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
 
     private static final String EXTRA_MOVIE_URL =
             "com.ssowens.android.popularmovies.movie_url";
@@ -23,6 +29,11 @@ public class MovieDetailActivity extends SingleFragmentActivity {
             "com.ssowens.android.popularmovies.movie_vote_average";
     private static final String EXTRA_MOVIE_OVERVIEW =
             "com.ssowens.android.popularmovies.movie_overview";
+    private static final String EXTRA_MOVIE_TRAILER =
+            "com.ssowens.android.popularmovies.videos";
+    private static final String EXTRA_MOVIE_ID =
+            "com.ssowens.android.poputlarmovies.id";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,12 +82,18 @@ public class MovieDetailActivity extends SingleFragmentActivity {
                 .getSerializableExtra(EXTRA_VOTE_AVERAGE);
         String overview = (String) getIntent()
                 .getSerializableExtra(EXTRA_MOVIE_OVERVIEW);
+        String trailer = (String) getIntent()
+                .getSerializableExtra(EXTRA_MOVIE_TRAILER);
+        String movieId = (String) getIntent()
+                .getSerializableExtra(EXTRA_MOVIE_ID);
 
         return MovieDetailFragment.newInstance(movieUrl,
                 movieTitle,
                 releaseDate,
                 voteAverage,
-                overview);
+                overview,
+                trailer,
+                movieId);
     }
 
     public static Intent newIntent(Context packageContext,
@@ -84,13 +101,33 @@ public class MovieDetailActivity extends SingleFragmentActivity {
                                    String movieTitle,
                                    String releaseDate,
                                    String voteAverage,
-                                   String overview) {
+                                   String overview,
+                                   String trailer,
+                                   String movieId) {
         Intent intent = new Intent(packageContext, MovieDetailActivity.class);
         intent.putExtra(EXTRA_MOVIE_URL, imageUrl);
         intent.putExtra(EXTRA_MOVIE_TITLE, movieTitle);
         intent.putExtra(EXTRA_MOVIE_RELEASE_DATE, releaseDate);
         intent.putExtra(EXTRA_VOTE_AVERAGE, voteAverage);
         intent.putExtra(EXTRA_MOVIE_OVERVIEW, overview);
+        intent.putExtra(EXTRA_MOVIE_TRAILER, trailer);
+        intent.putExtra(EXTRA_MOVIE_ID, movieId);
         return intent;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_START_STANDALONE_PLAYER && resultCode != RESULT_OK) {
+            YouTubeInitializationResult errorReason =
+                    YouTubeStandalonePlayer.getReturnedInitializationResult(data);
+            if (errorReason.isUserRecoverableError()) {
+                errorReason.getErrorDialog(this, 0).show();
+            } else {
+                String errorMessage =
+                        String.format(getString(R.string.error_player), errorReason.toString());
+                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
