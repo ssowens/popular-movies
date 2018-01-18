@@ -16,6 +16,7 @@ import com.google.android.youtube.player.YouTubeStandalonePlayer;
 public class MovieDetailActivity extends SingleFragmentActivity {
 
     public final static String TAG = "MovieDetailActivity";
+
     private static final int REQ_START_STANDALONE_PLAYER = 1;
     private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
 

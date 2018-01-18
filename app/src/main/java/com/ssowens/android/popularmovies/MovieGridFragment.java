@@ -89,7 +89,7 @@ public class MovieGridFragment extends Fragment {
                 String voteAverage = item.getVoteAverage();
                 String overview = item.getOverView();
                 String trailer = item.getTrailer();
-                String movieId = item.getMovieId();
+                int movieId = item.getMovieId();
                 Intent intent = MovieDetailActivity.newIntent(getActivity(),
                         imageUrl,
                         movieTitle,
@@ -97,7 +97,7 @@ public class MovieGridFragment extends Fragment {
                         voteAverage,
                         overview,
                         trailer,
-                        movieId);
+                        String.valueOf(movieId));
                 startActivity(intent);
             }
         });

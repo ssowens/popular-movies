@@ -28,23 +28,23 @@ public class MovieFetchr {
     private static final String TMDB_ORIGINAL_TITLE = "original_title";
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
     private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
+    private static final String BASE_URL = "http://api.themoviedb" +
+            ".org/3/movie/";
+    private static final String VIDEOS = "&append_to_response=videos";
+    private static final String REVIEWS = "&append_to_response=reviews";
     public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
-//    public static final String POPULAR_MOVIE_URL = "https://api.themoviedb" +
-//            ".org/3/discover/movie?api_key=" + API_KEY + "&sort_by=popularity.desc";
-
     public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/top_rated?api_key=" + API_KEY;
-
-//    public static final String TOP_RATED_MOVIE_URL = "https://api.themoviedb" +
-//            ".org/3/discover/movie?api_key=" + API_KEY + "&sort_by=vote_average.desc";
 
     public static final String FAVORITES_URL = "http://api.themoviedb" +
             ".org/3/movie/top_rated?api_key=" + API_KEY;
     public static final String TRAILER_URL = "http://api.themoviedb" +
-            ".org/3/movie/?api_key=" + API_KEY + "?id=" + "/videos";
-    public static final String REVIEWS = "http://api.themoviedb" +
+            ".org/3/movie/?api_key=" + API_KEY + "?id=" + VIDEOS;
+    public static final String REVIEWS2 = "http://api.themoviedb" +
             ".org/3/movie/?api_key=" + API_KEY + "/reviews";
+
+    public static final String MOVIE_ID = "id";
 
     /**
      * This method fetches raw data from a URL and returns it as an array of bytes.
@@ -143,8 +143,20 @@ public class MovieFetchr {
             // Get the release date
             mMovie.setReleaseDate(movieObject.getString(TMDB_RELEASE_DATE));
 
-            // Get the reviews
+            // Get the movie id
+            mMovie.setMovieId(movieObject.getInt(MOVIE_ID));
 
+            String trailerId = BASE_URL + mMovie.getMovieId() + "?api_key=" + API_KEY + VIDEOS;
+            Log.i("Sheila ~ trailerId =>", trailerId);
+
+            // Get the trailer
+            mMovie.setTrailer(trailerId);
+
+            String reviews = BASE_URL + mMovie.getMovieId() + "?api_key=" + API_KEY + REVIEWS;
+            Log.i("Sheila ~ reviews =>", reviews);
+
+            // Get the reviews
+            mMovie.setReviews(reviews);
 
             movies.add(mMovie);
         }

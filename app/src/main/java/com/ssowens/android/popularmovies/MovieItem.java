@@ -16,7 +16,9 @@ class MovieItem {
     private String overView;
     private String voteAverage;
     private String trailer;
-    private String movieId;
+    private String releaseDate;
+    private String reviews;
+    private int movieId;
 
     MovieItem() {
         mId = UUID.randomUUID();
@@ -29,7 +31,6 @@ class MovieItem {
     public void setId(UUID id) {
         mId = id;
     }
-
 
     String getImage() {
         return image;
@@ -47,11 +48,11 @@ class MovieItem {
         this.title = title;
     }
 
-    public String getMovieId() {
+    public int getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(String movieId) {
+    public void setMovieId(int movieId) {
         this.movieId = movieId;
     }
 
@@ -87,7 +88,13 @@ class MovieItem {
         this.releaseDate = releaseDate;
     }
 
-    private String releaseDate;
+    public String getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(String reviewsUrl) {
+        this.reviews = reviewsUrl;
+    }
 
 
 }
