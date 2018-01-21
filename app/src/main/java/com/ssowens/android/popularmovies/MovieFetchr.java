@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 public class MovieFetchr {
     private static final String TAG = "MovieFetchr";
+
     private static final String TMDB_RESULTS = "results";
     private static final String TMDB_POSTER_PATH = "poster_path";
     private static final String TMDB_VOTE_AVERAGE = "vote_average";
@@ -41,8 +42,6 @@ public class MovieFetchr {
             ".org/3/movie/top_rated?api_key=" + API_KEY;
     public static final String TRAILER_URL = "http://api.themoviedb" +
             ".org/3/movie/?api_key=" + API_KEY + "?id=" + VIDEOS;
-    public static final String REVIEWS2 = "http://api.themoviedb" +
-            ".org/3/movie/?api_key=" + API_KEY + "/reviews";
 
     public static final String MOVIE_ID = "id";
 

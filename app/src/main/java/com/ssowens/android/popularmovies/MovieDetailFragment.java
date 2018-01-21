@@ -103,7 +103,6 @@ public class MovieDetailFragment extends Fragment {
         mOverview = (TextView) view.findViewById(R.id.movie_overview_text_view);
         mVoteAverage = (TextView) view.findViewById(R.id.movie_vote_average_text_view);
         mReleasteDate = (TextView) view.findViewById(R.id.movie_release_date_text_view);
-//      trailerVideo = (YouTubePlayerView) view.findViewById(R.id.trailer_youtube_view);
         playVideoBtn = (Button) view.findViewById(R.id.start_video_button);
 
         // Create a progress bar

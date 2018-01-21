@@ -17,10 +17,20 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.ssowens.android.popularmovies.MovieFetchr.FAVORITES_URL;
-import static com.ssowens.android.popularmovies.MovieFetchr.POPULAR_MOVIE_URL;
 import static com.ssowens.android.popularmovies.MovieFetchr.TOP_RATED_MOVIE_URL;
 import static com.ssowens.android.popularmovies.R.id.gridView;
 
@@ -42,6 +52,16 @@ public class MovieGridFragment extends Fragment {
     public ActionBar actionBar;
     private String title;
 
+    private RequestQueue requestQueue;
+    private Gson gson;
+
+    private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
+    public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
+            ".org/3/movie/popular?api_key=" + API_KEY;
+    private static final String ENDPOINT = "http://api.themoviedb" +
+            ".org/3/movie/popular?api_key=" + API_KEY;
+    ;
+
     public static MovieGridFragment newInstance() {
 
         return new MovieGridFragment();
@@ -49,6 +69,7 @@ public class MovieGridFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -60,14 +81,26 @@ public class MovieGridFragment extends Fragment {
         // Set this option for defaults in the Settings screen
         PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
 
+        requestQueue = Volley.newRequestQueue(getActivity());
+
+        gson = new Gson();
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setDateFormat("M/d/yy hh:mm a");
+        gson = gsonBuilder.create();
+
+        fetchMovies();
+
         // This call starts the AsyncTask which will start a background thread
         // and kick off doInBackground().
-        new FetchItemsTask().execute();
+        //new FetchItemsTask().execute();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i(TAG, "onCreateView()");
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
@@ -107,6 +140,77 @@ public class MovieGridFragment extends Fragment {
 
         return rootView;
     }
+
+    private void fetchMovies() {
+        Log.i(TAG, "fetchMovies()");
+        StringRequest request = new StringRequest(Request.Method.GET, ENDPOINT, onMoviesLoaded, onMoviesError);
+        requestQueue.add(request);
+    }
+
+    private final Response.Listener<String> onMoviesLoaded = new Response.Listener<String>() {
+
+        @Override
+        public void onResponse(String response) {
+            Log.i("MovieGridFragment=>", response);
+
+            List<Movies> movieObject = Arrays.asList(gson.fromJson(response,
+                    Movies.class));
+
+            Log.i("MovieGridFragment", movieObject.size() + " movies loaded.");
+
+            for (Movies movie : movieObject) {
+            //    Log.i("MovieGridFragment", movie.toString());
+                Log.i("MovieGridFragment", movie.getMovieItems().get(0).getTitle());
+
+//                + ": "
+//                        + movieList. + ": "
+//                        + movieList.overview + ": "
+//                        + movieList.posterPath + ": ");
+//
+//                // Get the title of the movie poster
+//                movieItem.setTitle(movie.originalTitle);
+//               // movies.add(movieItem);
+            }
+//
+//            String movie_url;
+//
+//            // Get the movie sort order
+//            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//            String moviesSortOrder = sharedPref.getString(getString(R.string.pref_movies_key),
+//                    getString(R.string.pref_movies_key));
+//
+//            switch (moviesSortOrder) {
+//                case POPULAR_MOVIES_KEY:
+//                    movie_url = POPULAR_MOVIE_URL;
+//                    title = getString(R.string.pref_sort_most_popular);
+//                    break;
+//                case TOP_RATED_MOVIES_KEY:
+//                    movie_url = TOP_RATED_MOVIE_URL;
+//                    title = getString(R.string.pref_sort_top_rate);
+//                    break;
+//                case FAVORITE_MOVIES_KEY:
+//                    movie_url = FAVORITES_URL;
+//                    title = getString(R.string.pref_sort_favorites);
+//                    break;
+//                default:
+//                    movie_url = TOP_RATED_MOVIE_URL;
+//                    title = getString(R.string.pref_sort_top_rate);
+//                    break;
+        }
+//
+//            gridData = new MovieFetchr().fetchItems(movie_url);
+        //    }
+    };
+
+    private final Response.ErrorListener onMoviesError = new Response.ErrorListener() {
+
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("MovieGridFragment", error.toString());
+        }
+    };
+
 
     private class FetchItemsTask extends AsyncTask<Void, Void, ArrayList<MovieItem>> {
 
@@ -169,8 +273,8 @@ public class MovieGridFragment extends Fragment {
     }
 
     private void updateMovies() {
-        FetchItemsTask moviesTask = new FetchItemsTask();
-        moviesTask.execute();
+        //      FetchItemsTask moviesTask = new FetchItemsTask();
+        //       moviesTask.execute();
         actionBar.setTitle(title);
     }
 

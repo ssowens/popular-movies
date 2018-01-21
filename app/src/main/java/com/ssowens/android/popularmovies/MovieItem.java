@@ -1,5 +1,7 @@
 package com.ssowens.android.popularmovies;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.UUID;
 
 /**
@@ -9,16 +11,46 @@ import java.util.UUID;
 
 class MovieItem {
 
-    private UUID mId;
-    private int moviePosition;
-    private String image;
-    private String title;
-    private String overView;
-    private String voteAverage;
-    private String trailer;
-    private String releaseDate;
-    private String reviews;
+    private static final String TAG = "MovieItem";
+
+    @SerializedName("vote_count")
+    private int voteCount;
+
+    @SerializedName("id")
     private int movieId;
+
+    boolean video;
+
+    @SerializedName("vote_average")
+    private String voteAverage;
+
+    private String title;
+
+    private String popularity;
+
+    @SerializedName("poster_path")
+    private String image;
+
+    @SerializedName("original_title")
+    private String originalTitle;
+
+    private String overview;
+
+    @SerializedName("release_date")
+    private String releaseDate;
+
+
+    private UUID mId;
+    private String trailer;
+    private String reviews;
+
+
+    public MovieItem(String voteAverage, String originalTitle, String image, String overview) {
+        this.voteAverage = voteAverage;
+        this.originalTitle = originalTitle;
+        this.image = image;
+        this.overview = overview;
+    }
 
     MovieItem() {
         mId = UUID.randomUUID();
@@ -64,27 +96,27 @@ class MovieItem {
         this.trailer = trailer;
     }
 
-    String getOverView() {
-        return overView;
+    public String getOverView() {
+        return overview;
     }
 
-    void setOverView(String overView) {
-        this.overView = overView;
+    public void setOverView(String overView) {
+        this.overview = overView;
     }
 
-    String getVoteAverage() {
+    public String getVoteAverage() {
         return voteAverage;
     }
 
-    void setVoteAverage(String voteAverage) {
+    public void setVoteAverage(String voteAverage) {
         this.voteAverage = voteAverage;
     }
 
-    String getReleaseDate() {
+    public String getReleaseDate() {
         return releaseDate;
     }
 
-    void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
 
@@ -97,4 +129,23 @@ class MovieItem {
     }
 
 
+    @Override
+    public String toString() {
+        return "MovieItem{" +
+                "voteCount=" + voteCount +
+                ", movieId=" + movieId +
+                ", video=" + video +
+                ", voteAverage='" + voteAverage + '\'' +
+                ", title='" + title + '\'' +
+                ", popularity='" + popularity + '\'' +
+                ", image='" + image + '\'' +
+                ", originalTitle='" + originalTitle + '\'' +
+                ", overview='" + overview + '\'' +
+                ", releaseDate='" + releaseDate + '\'' +
+                ", mId=" + mId +
+                ", overView='" + overview + '\'' +
+                ", trailer='" + trailer + '\'' +
+                ", reviews='" + reviews + '\'' +
+                '}';
+    }
 }
