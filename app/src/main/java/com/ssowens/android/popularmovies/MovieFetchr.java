@@ -1,17 +1,12 @@
 package com.ssowens.android.popularmovies;
 
-import android.net.Uri;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -28,86 +23,12 @@ public class MovieFetchr {
     private static final String TMDB_RELEASE_DATE = "release_date";
     private static final String TMDB_ORIGINAL_TITLE = "original_title";
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
-    private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
+    //private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
     private static final String BASE_URL = "http://api.themoviedb" +
             ".org/3/movie/";
     private static final String VIDEOS = "&append_to_response=videos";
     private static final String REVIEWS = "&append_to_response=reviews";
-    public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
-            ".org/3/movie/popular?api_key=" + API_KEY;
-    public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
-            ".org/3/movie/top_rated?api_key=" + API_KEY;
-
-    public static final String FAVORITES_URL = "http://api.themoviedb" +
-            ".org/3/movie/top_rated?api_key=" + API_KEY;
-    public static final String TRAILER_URL = "http://api.themoviedb" +
-            ".org/3/movie/?api_key=" + API_KEY + "?id=" + VIDEOS;
-
     public static final String MOVIE_ID = "id";
-
-    /**
-     * This method fetches raw data from a URL and returns it as an array of bytes.
-     *
-     * @param urlSpec
-     * @return
-     * @throws IOException
-     */
-    public byte[] getUrlBytes(String urlSpec) throws IOException {
-        Log.i(TAG, "Entering getUrlBytes");
-        URL url = new URL(urlSpec);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            InputStream in = connection.getInputStream();
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new IOException((connection.getResponseMessage() + ": with " + urlSpec));
-            }
-
-            int bytesRead = 0;
-            byte[] buffer = new byte[1024];
-            while ((bytesRead = in.read(buffer)) > 0) {
-                out.write(buffer, 0, bytesRead);
-            }
-            out.close();
-            return out.toByteArray();
-        } finally {
-            connection.disconnect();
-        }
-    }
-
-    /**
-     * This method converts the results from getUrlBytes(String) to a String.
-     *
-     * @param urlSpec
-     * @return
-     * @throws IOException
-     */
-    public String getUrlString(String urlSpec) throws IOException {
-        return new String(getUrlBytes(urlSpec));
-    }
-
-    public ArrayList<MovieItem> fetchItems(String movie_url) {
-
-        ArrayList<MovieItem> items = new ArrayList<>();
-
-        Log.i(TAG, "Entering fetchItems");
-
-        try {
-            String url = Uri.parse(movie_url).toString();
-            String jsonString = getUrlString(url);
-            Log.i(TAG, "Received JSON: " + jsonString);
-            JSONObject jsonBody = new JSONObject(jsonString);
-            items = parseItems(jsonBody);
-
-        } catch (IOException ioe) {
-            Log.e(TAG, "Failed to fetch items", ioe);
-        } catch (JSONException je) {
-            Log.e(TAG, "Failed to parse JSON", je);
-        }
-
-        return items;
-    }
-
 
     private ArrayList<MovieItem> parseItems(JSONObject jsonBody)
             throws IOException, JSONException {
@@ -145,21 +66,20 @@ public class MovieFetchr {
             // Get the movie id
             mMovie.setMovieId(movieObject.getInt(MOVIE_ID));
 
-            String trailerId = BASE_URL + mMovie.getMovieId() + "?api_key=" + API_KEY + VIDEOS;
-            Log.i("Sheila ~ trailerId =>", trailerId);
+//            String trailerId = BASE_URL + mMovie.getMovieId() + "?api_key=" + API_KEY + VIDEOS;
+//            Log.i("Sheila ~ trailerId =>", trailerId);
+//
+//            // Get the trailer
+//            mMovie.setTrailer(trailerId);
+//
+//            String reviews = BASE_URL + mMovie.getMovieId() + "?api_key=" + API_KEY + REVIEWS;
+//            Log.i("Sheila ~ reviews =>", reviews);
 
-            // Get the trailer
-            mMovie.setTrailer(trailerId);
-
-            String reviews = BASE_URL + mMovie.getMovieId() + "?api_key=" + API_KEY + REVIEWS;
-            Log.i("Sheila ~ reviews =>", reviews);
-
-            // Get the reviews
-            mMovie.setReviews(reviews);
+//            // Get the reviews
+//            mMovie.setReviews(reviews);
 
             movies.add(mMovie);
         }
         return movies;
     }
-
 }

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,9 +41,9 @@ public class MovieDetailFragment extends Fragment {
     private TextView mTitle;
     private TextView mOverview;
     private TextView mVoteAverage;
-    private TextView mReleasteDate;
-    //    private YouTubePlayerView trailerVideo;
+    private TextView releasteDate;
     private Button playVideoBtn;
+    private RecyclerView trailerRecyclerView;
 
     private String mImageUrl;
     private String mMovieTitleStr;
@@ -98,12 +100,14 @@ public class MovieDetailFragment extends Fragment {
         Activity activity = getActivity();
         Context context = getContext();
 
-        mImage = (ImageView) view.findViewById(R.id.image);
-        mTitle = (TextView) view.findViewById(R.id.movie_title_text_view);
-        mOverview = (TextView) view.findViewById(R.id.movie_overview_text_view);
-        mVoteAverage = (TextView) view.findViewById(R.id.movie_vote_average_text_view);
-        mReleasteDate = (TextView) view.findViewById(R.id.movie_release_date_text_view);
-        playVideoBtn = (Button) view.findViewById(R.id.start_video_button);
+        mImage = view.findViewById(R.id.image);
+        mTitle = view.findViewById(R.id.movie_title_text_view);
+        mOverview = view.findViewById(R.id.movie_overview_text_view);
+        mVoteAverage = view.findViewById(R.id.movie_vote_average_text_view);
+        releasteDate = view.findViewById(R.id.movie_release_date_text_view);
+        playVideoBtn = view.findViewById(R.id.start_video_button);
+        trailerRecyclerView = view.findViewById(R.id.trailer_recycler_view);
+        trailerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // Create a progress bar
         // progressBar = new ProgressBar(this);
@@ -112,7 +116,7 @@ public class MovieDetailFragment extends Fragment {
         mTitle.setText(mMovieTitleStr);
         mOverview.setText(mOverviewStr);
         mVoteAverage.setText(mVoteAverateStr);
-        mReleasteDate.setText(mReleaseDateStr);
+        releasteDate.setText(mReleaseDateStr);
         playVideoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,8 +163,37 @@ public class MovieDetailFragment extends Fragment {
         return resolveInfo != null && !resolveInfo.isEmpty();
     }
 
-//    public static boolean canResolvePlayVideoIntent(Context var0) {
-//        Uri var1 = Uri.parse("https://www.youtube.com/watch?v=");
-//        return getActivity().a(var0, var1);
-//    }
+    private class TrailerListFragment extends RecyclerView.ViewHolder {
+
+        public TrailerListFragment(LayoutInflater inflater, ViewGroup parent) {
+            super(inflater.inflate(R.layout.list_item_trailer, parent, false));
+        }
+    }
+
+    private class TrailerAdapter extends RecyclerView.Adapter<TrailerHolder> {
+
+        @Override
+        public TrailerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(TrailerHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+    }
+
+    private class TrailerHolder extends RecyclerView.ViewHolder {
+
+        public TrailerHolder(View itemView) {
+            super(itemView);
+        }
+    }
 }

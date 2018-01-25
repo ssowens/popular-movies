@@ -2,7 +2,6 @@ package com.ssowens.android.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -30,8 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ssowens.android.popularmovies.MovieFetchr.FAVORITES_URL;
-import static com.ssowens.android.popularmovies.MovieFetchr.TOP_RATED_MOVIE_URL;
 import static com.ssowens.android.popularmovies.R.id.gridView;
 
 /**
@@ -45,6 +42,22 @@ public class MovieGridFragment extends Fragment {
     private static final String POPULAR_MOVIES_KEY = "0";
     private static final String TOP_RATED_MOVIES_KEY = "1";
     private static final String FAVORITE_MOVIES_KEY = "2";
+    private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
+    private static final String BASE_URL = "http://api.themoviedb" +
+            ".org/3/movie/";
+    private static final String VIDEOS = "&append_to_response=videos";
+    private static final String REVIEWS = "&append_to_response=reviews";
+    public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
+            ".org/3/movie/popular?api_key=" + API_KEY;
+    public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
+            ".org/3/movie/top_rated?api_key=" + API_KEY;
+
+    public static final String FAVORITES_URL = "http://api.themoviedb" +
+            ".org/3/movie/top_rated?api_key=" + API_KEY;
+    public static final String TRAILER_URL = "http://api.themoviedb" +
+            ".org/3/movie/?api_key=" + API_KEY + "?id=" + VIDEOS;
+    private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
+
 
     private ProgressBar progressBar;
     private GridViewAdapter gridAdapter;
@@ -55,12 +68,9 @@ public class MovieGridFragment extends Fragment {
     private RequestQueue requestQueue;
     private Gson gson;
 
-    private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
-    public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
-            ".org/3/movie/popular?api_key=" + API_KEY;
     private static final String ENDPOINT = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
-    ;
+    private String endPoint;
 
     public static MovieGridFragment newInstance() {
 
@@ -89,12 +99,8 @@ public class MovieGridFragment extends Fragment {
         gsonBuilder.setDateFormat("M/d/yy hh:mm a");
         gson = gsonBuilder.create();
 
-        fetchMovies();
-
-        // This call starts the AsyncTask which will start a background thread
-        // and kick off doInBackground().
-        //new FetchItemsTask().execute();
-
+        endPoint = ENDPOINT;
+        fetchMovies(endPoint);
     }
 
     @Override
@@ -141,9 +147,10 @@ public class MovieGridFragment extends Fragment {
         return rootView;
     }
 
-    private void fetchMovies() {
+    private void fetchMovies(String endPoint) {
         Log.i(TAG, "fetchMovies()");
-        StringRequest request = new StringRequest(Request.Method.GET, ENDPOINT, onMoviesLoaded, onMoviesError);
+        StringRequest request = new StringRequest(Request.Method.GET, endPoint, onMoviesLoaded,
+                onMoviesError);
         requestQueue.add(request);
     }
 
@@ -158,19 +165,46 @@ public class MovieGridFragment extends Fragment {
 
             Log.i("MovieGridFragment", movieObject.size() + " movies loaded.");
 
-            for (Movies movie : movieObject) {
-            //    Log.i("MovieGridFragment", movie.toString());
-                Log.i("MovieGridFragment", movie.getMovieItems().get(0).getTitle());
+            ArrayList<MovieItem> items = new ArrayList<MovieItem>();
 
-//                + ": "
-//                        + movieList. + ": "
-//                        + movieList.overview + ": "
-//                        + movieList.posterPath + ": ");
-//
-//                // Get the title of the movie poster
-//                movieItem.setTitle(movie.originalTitle);
-//               // movies.add(movieItem);
+            for (Movies movie : movieObject) {
+                Log.i("MovieGridFragment", movie.getMovieItems().get(0).getTitle());
+                for (int iter = 0; iter < movie.getMovieItems().size(); iter++) {
+                    MovieItem eachMovie = new MovieItem();
+                    eachMovie.setMovieId(movie.getMovieItems().get(iter).getMovieId());
+                    eachMovie.setTitle(movie.getMovieItems().get(iter).getTitle());
+                    eachMovie.setOverView(movie.getMovieItems().get(iter).getOverView());
+                    eachMovie.setReleaseDate(movie.getMovieItems().get(iter).getReleaseDate());
+                    eachMovie.setVoteAverage(movie.getMovieItems().get(iter).getVoteAverage());
+
+                    // Get the movie image
+                    String posterPath = movie.getMovieItems().get(iter).getImage();
+                    String posterUrl = POSTER_BASE_URL + posterPath;
+                    Log.v(TAG, "Poster URL = " + posterUrl);
+                    eachMovie.setImage(posterUrl);
+                    items.add(eachMovie);
+                }
             }
+            updateUI(items);
+        }
+    };
+
+    private final Response.ErrorListener onMoviesError = new Response.ErrorListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("MovieGridFragment", error.toString());
+        }
+    };
+
+//    private class FetchItemsTask extends AsyncTask<Void, Void, ArrayList<MovieItem>> {
+//
+//        private final String LOG_TAG = FetchItemsTask.class.getSimpleName();
+//
+//        @Override
+//        protected ArrayList<MovieItem> doInBackground(Void... params) {
+//
+//            Log.i(TAG, "doInBackground");
 //
 //            String movie_url;
 //
@@ -196,85 +230,34 @@ public class MovieGridFragment extends Fragment {
 //                    movie_url = TOP_RATED_MOVIE_URL;
 //                    title = getString(R.string.pref_sort_top_rate);
 //                    break;
-        }
+//            }
 //
-//            gridData = new MovieFetchr().fetchItems(movie_url);
-        //    }
-    };
-
-    private final Response.ErrorListener onMoviesError = new Response.ErrorListener() {
-
-
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Log.e("MovieGridFragment", error.toString());
-        }
-    };
-
-
-    private class FetchItemsTask extends AsyncTask<Void, Void, ArrayList<MovieItem>> {
-
-
-        private final String LOG_TAG = FetchItemsTask.class.getSimpleName();
-
-        @Override
-        protected ArrayList<MovieItem> doInBackground(Void... params) {
-
-            Log.i(TAG, "doInBackground");
-
-            String movie_url;
-
-            // Get the movie sort order
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String moviesSortOrder = sharedPref.getString(getString(R.string.pref_movies_key),
-                    getString(R.string.pref_movies_key));
-
-            switch (moviesSortOrder) {
-                case POPULAR_MOVIES_KEY:
-                    movie_url = POPULAR_MOVIE_URL;
-                    title = getString(R.string.pref_sort_most_popular);
-                    break;
-                case TOP_RATED_MOVIES_KEY:
-                    movie_url = TOP_RATED_MOVIE_URL;
-                    title = getString(R.string.pref_sort_top_rate);
-                    break;
-                case FAVORITE_MOVIES_KEY:
-                    movie_url = FAVORITES_URL;
-                    title = getString(R.string.pref_sort_favorites);
-                    break;
-                default:
-                    movie_url = TOP_RATED_MOVIE_URL;
-                    title = getString(R.string.pref_sort_top_rate);
-                    break;
-            }
-
-            gridData = new MovieFetchr().fetchItems(movie_url);
-            return gridData;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<MovieItem> gridItems) {
-
-            // Download complete. Let us update UI
-            super.onPostExecute(gridItems);
-            Log.v(TAG, "gridItems = " + gridItems.size());
-
-            gridAdapter.clear();
-            Log.v(TAG, "gridItems = " + gridItems.size());
-
-            if (gridItems != null) {
-                gridAdapter.addAll(gridItems);
-                gridAdapter.setGridData(gridItems);
-            } else {
-                Toast.makeText(getActivity(), "Failed to fetch data!", Toast.LENGTH_SHORT).show();
-            }
-            progressBar.setVisibility(View.GONE);
-        }
-    }
+//            //   gridData = new MovieFetchr().fetchItems(movie_url);
+//            return gridData;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(ArrayList<MovieItem> gridItems) {
+//
+//            // Download complete. Let us update UI
+//            super.onPostExecute(gridItems);
+//            Log.v(TAG, "gridItems = " + gridItems.size());
+//
+//            gridAdapter.clear();
+//            Log.v(TAG, "gridItems = " + gridItems.size());
+//
+//            if (gridItems != null) {
+//                gridAdapter.addAll(gridItems);
+//                gridAdapter.setGridData(gridItems);
+//            } else {
+//                Toast.makeText(getActivity(), "Failed to fetch data!", Toast.LENGTH_SHORT).show();
+//            }
+//            progressBar.setVisibility(View.GONE);
+//        }
+//    }
 
     private void updateMovies() {
-        //      FetchItemsTask moviesTask = new FetchItemsTask();
-        //       moviesTask.execute();
+        getMovieSortOrder();
         actionBar.setTitle(title);
     }
 
@@ -284,4 +267,48 @@ public class MovieGridFragment extends Fragment {
         updateMovies();
     }
 
+    public void updateUI(ArrayList<MovieItem> gridItems) {
+        Log.v(TAG, "gridItems = " + gridItems.size());
+
+        gridAdapter.clear();
+
+        if (gridItems != null) {
+            gridAdapter.addAll(gridItems);
+            gridAdapter.setGridData(gridItems);
+        } else {
+            Toast.makeText(getActivity(), "Failed to fetch data!", Toast.LENGTH_SHORT).show();
+        }
+        progressBar.setVisibility(View.GONE);
+    }
+
+    public void getMovieSortOrder() {
+        Log.v(TAG, "getMovieSortOrder");
+
+        String movie_url;
+
+        // Get the movie sort order
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String moviesSortOrder = sharedPref.getString(getString(R.string.pref_movies_key),
+                getString(R.string.pref_movies_key));
+
+        switch (moviesSortOrder) {
+            case POPULAR_MOVIES_KEY:
+                movie_url = POPULAR_MOVIE_URL;
+                title = getString(R.string.pref_sort_most_popular);
+                break;
+            case TOP_RATED_MOVIES_KEY:
+                movie_url = TOP_RATED_MOVIE_URL;
+                title = getString(R.string.pref_sort_top_rate);
+                break;
+            case FAVORITE_MOVIES_KEY:
+                movie_url = FAVORITES_URL;
+                title = getString(R.string.pref_sort_favorites);
+                break;
+            default:
+                movie_url = TOP_RATED_MOVIE_URL;
+                title = getString(R.string.pref_sort_top_rate);
+                break;
+        }
+        fetchMovies(movie_url);
+    }
 }

@@ -45,10 +45,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/image"
-                tools:text="User Rating"
                 android:hint="@string/movie_vote_average"
                 android:paddingBottom="32dp"
-                android:paddingLeft="20dp"/>
+                android:paddingLeft="20dp"
+                tools:text="User Rating"/>
 
             <TextView
                 android:id="@+id/movie_release_date_text_view"
@@ -57,9 +57,9 @@
                 android:layout_below="@id/movie_vote_average_text_view"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/image"
-                tools:text="Release Date"
                 android:hint="@string/movie_release_date"
-                android:paddingLeft="20dp"/>
+                android:paddingLeft="20dp"
+                tools:text="Release Date"/>
 
         </RelativeLayout>
 
@@ -101,6 +101,13 @@
                 android:paddingBottom="8dp"
                 android:text="@string/play_video"/>
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/trailer_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
+
             <TextView
                 android:id="@+id/trailer_title"
                 android:layout_width="wrap_content"
@@ -111,7 +118,6 @@
                 android:id="@+id/youtube_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
 
         </LinearLayout>
 

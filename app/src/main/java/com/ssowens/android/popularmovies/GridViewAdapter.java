@@ -22,13 +22,11 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
     private Context mContext;
     private ArrayList<MovieItem> mGridMovies = new ArrayList<>();
 
-
     public GridViewAdapter(Context context, ArrayList<MovieItem> dataObjects) {
         super(context, 0, dataObjects);
         this.mContext = context;
         this.mGridMovies = dataObjects;
     }
-
 
     /**
      * Updates grid data and refresh grid items.
@@ -39,7 +37,6 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
         this.mGridMovies = objects;
         notifyDataSetChanged();
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -69,5 +66,4 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
 
         return rootView;
     }
-
 }

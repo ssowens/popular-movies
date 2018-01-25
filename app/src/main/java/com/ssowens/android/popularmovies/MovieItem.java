@@ -24,8 +24,6 @@ class MovieItem {
     @SerializedName("vote_average")
     private String voteAverage;
 
-    private String title;
-
     private String popularity;
 
     @SerializedName("poster_path")
@@ -39,11 +37,9 @@ class MovieItem {
     @SerializedName("release_date")
     private String releaseDate;
 
-
     private UUID mId;
     private String trailer;
     private String reviews;
-
 
     public MovieItem(String voteAverage, String originalTitle, String image, String overview) {
         this.voteAverage = voteAverage;
@@ -73,11 +69,11 @@ class MovieItem {
     }
 
     String getTitle() {
-        return title;
+        return originalTitle;
     }
 
     void setTitle(String title) {
-        this.title = title;
+        this.originalTitle = title;
     }
 
     public int getMovieId() {
@@ -128,7 +124,6 @@ class MovieItem {
         this.reviews = reviewsUrl;
     }
 
-
     @Override
     public String toString() {
         return "MovieItem{" +
@@ -136,7 +131,6 @@ class MovieItem {
                 ", movieId=" + movieId +
                 ", video=" + video +
                 ", voteAverage='" + voteAverage + '\'' +
-                ", title='" + title + '\'' +
                 ", popularity='" + popularity + '\'' +
                 ", image='" + image + '\'' +
                 ", originalTitle='" + originalTitle + '\'' +
