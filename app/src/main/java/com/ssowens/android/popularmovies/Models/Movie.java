@@ -1,8 +1,9 @@
-package com.ssowens.android.popularmovies;
+package com.ssowens.android.popularmovies.Models;
 
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
+import com.ssowens.android.popularmovies.MovieItem;
 
 import java.util.List;
 
@@ -10,8 +11,8 @@ import java.util.List;
  * Created by Sheila Owens on 1/18/18.
  */
 
-public class Movies {
-    private static final String TAG = "Movies";
+public class Movie {
+    private static final String TAG = "Movie";
 
     private int page;
 
@@ -40,16 +41,16 @@ public class Movies {
         return totalPages;
     }
 
-    public Movies(List<MovieItem> movieItems) {
+    public Movie(List<MovieItem> movieItems) {
         this.movieItems = movieItems;
     }
 
     @Override
     public String toString() {
         if (movieItems != null) {
-            Log.i("Movies", "this works");
+            Log.i("Movie", "this works");
         }
-        return "Movies{" +
+        return "Movie{" +
                 "page=" + page +
                 ", totalResults=" + totalResults +
                 ", totalPages=" + totalPages +

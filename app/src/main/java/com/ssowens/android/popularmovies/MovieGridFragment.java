@@ -24,6 +24,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ssowens.android.popularmovies.Models.Movie;
+import com.ssowens.android.popularmovies.Models.Trailer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +59,7 @@ public class MovieGridFragment extends Fragment {
     public static final String TRAILER_URL = "http://api.themoviedb" +
             ".org/3/movie/?api_key=" + API_KEY + "?id=" + VIDEOS;
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
+    public String key = "";
 
 
     private ProgressBar progressBar;
@@ -67,9 +70,15 @@ public class MovieGridFragment extends Fragment {
 
     private RequestQueue requestQueue;
     private Gson gson;
+    private String movieId;
 
     private static final String ENDPOINT = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
+    private static final String TRAILER_START = "http://api.themoviedb" +
+            ".org/3/movie/";
+    private static final String TRAILER_END = "/videos?api_key=" + API_KEY;
+
+
     private String endPoint;
 
     public static MovieGridFragment newInstance() {
@@ -110,7 +119,7 @@ public class MovieGridFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
-        final GridView mGridView = (GridView) rootView.findViewById(gridView);
+        final GridView mGridView = rootView.findViewById(gridView);
 
         // Get a reference to the GridView, and attach this adapter to it.
         gridAdapter = new GridViewAdapter(getActivity(), gridData);
@@ -127,16 +136,23 @@ public class MovieGridFragment extends Fragment {
                 String releaseDate = item.getReleaseDate();
                 String voteAverage = item.getVoteAverage();
                 String overview = item.getOverView();
-                String trailer = item.getTrailer();
                 int movieId = item.getMovieId();
+                //TODO fetch trailer
+                String trailerUrl = TRAILER_START + movieId + TRAILER_END;
+                Log.i(TAG, "trailerURL=>" + trailerUrl);
+                fetchTrailers(trailerUrl);
+                String trailer = trailerUrl;
+                Log.i(TAG, "trailer=>" + trailer);
+
                 Intent intent = MovieDetailActivity.newIntent(getActivity(),
                         imageUrl,
                         movieTitle,
                         releaseDate,
                         voteAverage,
                         overview,
+                        String.valueOf(movieId),
                         trailer,
-                        String.valueOf(movieId));
+                        key);
                 startActivity(intent);
             }
         });
@@ -154,20 +170,27 @@ public class MovieGridFragment extends Fragment {
         requestQueue.add(request);
     }
 
+    private void fetchTrailers(String endPoint) {
+        Log.i(TAG, "fetchTrailers()");
+        //TODO populate trailers
+        StringRequest request = new StringRequest(Request.Method.GET, endPoint, onTrailerLoaded,
+                onTrailerError);
+        requestQueue.add(request);
+    }
+
     private final Response.Listener<String> onMoviesLoaded = new Response.Listener<String>() {
 
         @Override
         public void onResponse(String response) {
             Log.i("MovieGridFragment=>", response);
 
-            List<Movies> movieObject = Arrays.asList(gson.fromJson(response,
-                    Movies.class));
+            List<Movie> movieObject = Arrays.asList(gson.fromJson(response,
+                    Movie.class));
 
             Log.i("MovieGridFragment", movieObject.size() + " movies loaded.");
+            ArrayList<MovieItem> items = new ArrayList<>();
 
-            ArrayList<MovieItem> items = new ArrayList<MovieItem>();
-
-            for (Movies movie : movieObject) {
+            for (Movie movie : movieObject) {
                 Log.i("MovieGridFragment", movie.getMovieItems().get(0).getTitle());
                 for (int iter = 0; iter < movie.getMovieItems().size(); iter++) {
                     MovieItem eachMovie = new MovieItem();
@@ -189,6 +212,34 @@ public class MovieGridFragment extends Fragment {
         }
     };
 
+    private final Response.Listener<String> onTrailerLoaded = new Response.Listener<String>() {
+
+        @Override
+        public void onResponse(String response) {
+            Log.i(TAG, "Loading trailer");
+            List<Trailer> trailerObject = Arrays.asList(gson.fromJson(response, Trailer.class));
+            Log.i("MovieGridFragment", trailerObject.size() + " trailers loaded.");
+            ArrayList<TrailerItem> trailerItems = new ArrayList<>();
+
+            for (Trailer trailer : trailerObject) {
+                for (int iter = 0; iter < trailer.getTrailerItems().size(); iter++) {
+                    TrailerItem eachTrailer = new TrailerItem();
+                    if (trailer.getTrailerItems().get(iter).getType().equals("Trailer")) {
+                        eachTrailer.setIso_639_1(trailer.getTrailerItems().get(iter).getIso_639_1());
+                        eachTrailer.setIso_3166_1(trailer.getTrailerItems().get(iter).getIso_3166_1());
+                        eachTrailer.setKey(trailer.getTrailerItems().get(iter).getKey());
+                        eachTrailer.setName(trailer.getTrailerItems().get(iter).getName());
+                        eachTrailer.setSite(trailer.getTrailerItems().get(iter).getSite());
+                        eachTrailer.setSize(trailer.getTrailerItems().get(iter).getSize());
+                        eachTrailer.setType(trailer.getTrailerItems().get(iter).getType());
+                        trailerItems.add(eachTrailer);
+                    }
+                }
+            }
+            updateTrailerList(trailerItems);
+        }
+    };
+
     private final Response.ErrorListener onMoviesError = new Response.ErrorListener() {
 
         @Override
@@ -197,64 +248,14 @@ public class MovieGridFragment extends Fragment {
         }
     };
 
-//    private class FetchItemsTask extends AsyncTask<Void, Void, ArrayList<MovieItem>> {
-//
-//        private final String LOG_TAG = FetchItemsTask.class.getSimpleName();
-//
-//        @Override
-//        protected ArrayList<MovieItem> doInBackground(Void... params) {
-//
-//            Log.i(TAG, "doInBackground");
-//
-//            String movie_url;
-//
-//            // Get the movie sort order
-//            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//            String moviesSortOrder = sharedPref.getString(getString(R.string.pref_movies_key),
-//                    getString(R.string.pref_movies_key));
-//
-//            switch (moviesSortOrder) {
-//                case POPULAR_MOVIES_KEY:
-//                    movie_url = POPULAR_MOVIE_URL;
-//                    title = getString(R.string.pref_sort_most_popular);
-//                    break;
-//                case TOP_RATED_MOVIES_KEY:
-//                    movie_url = TOP_RATED_MOVIE_URL;
-//                    title = getString(R.string.pref_sort_top_rate);
-//                    break;
-//                case FAVORITE_MOVIES_KEY:
-//                    movie_url = FAVORITES_URL;
-//                    title = getString(R.string.pref_sort_favorites);
-//                    break;
-//                default:
-//                    movie_url = TOP_RATED_MOVIE_URL;
-//                    title = getString(R.string.pref_sort_top_rate);
-//                    break;
-//            }
-//
-//            //   gridData = new MovieFetchr().fetchItems(movie_url);
-//            return gridData;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(ArrayList<MovieItem> gridItems) {
-//
-//            // Download complete. Let us update UI
-//            super.onPostExecute(gridItems);
-//            Log.v(TAG, "gridItems = " + gridItems.size());
-//
-//            gridAdapter.clear();
-//            Log.v(TAG, "gridItems = " + gridItems.size());
-//
-//            if (gridItems != null) {
-//                gridAdapter.addAll(gridItems);
-//                gridAdapter.setGridData(gridItems);
-//            } else {
-//                Toast.makeText(getActivity(), "Failed to fetch data!", Toast.LENGTH_SHORT).show();
-//            }
-//            progressBar.setVisibility(View.GONE);
-//        }
-//    }
+    private final Response.ErrorListener onTrailerError = new Response.ErrorListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("MovieGridFragment", error.toString());
+        }
+    };
+
 
     private void updateMovies() {
         getMovieSortOrder();
@@ -269,7 +270,6 @@ public class MovieGridFragment extends Fragment {
 
     public void updateUI(ArrayList<MovieItem> gridItems) {
         Log.v(TAG, "gridItems = " + gridItems.size());
-
         gridAdapter.clear();
 
         if (gridItems != null) {
@@ -281,9 +281,26 @@ public class MovieGridFragment extends Fragment {
         progressBar.setVisibility(View.GONE);
     }
 
+    public void updateTrailerList(ArrayList<TrailerItem> trailerItems) {
+        Log.v(TAG, "gridItems = " + trailerItems.size());
+        for (TrailerItem trailerItem : trailerItems) {
+            if (trailerItem.getType().equals("Trailer")) {
+                key = trailerItem.getKey();
+                Log.i(TAG, "Sheila Key => " + key);
+                trailerItem.setIso_639_1((trailerItem.getIso_639_1()));
+                trailerItem.setIso_3166_1(trailerItem.getIso_3166_1());
+                trailerItem.setKey(trailerItem.getKey());
+                trailerItem.setName(trailerItem.getName());
+                trailerItem.setSite(trailerItem.getSite());
+                trailerItem.setSize(trailerItem.getSize());
+                trailerItem.setType(trailerItem.getType());
+                trailerItems.add(trailerItem);
+            }
+        }
+    }
+
     public void getMovieSortOrder() {
         Log.v(TAG, "getMovieSortOrder");
-
         String movie_url;
 
         // Get the movie sort order

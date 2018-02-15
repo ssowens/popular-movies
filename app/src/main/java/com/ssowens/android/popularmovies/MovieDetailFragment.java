@@ -6,20 +6,19 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeIntents;
 import com.squareup.picasso.Picasso;
+import com.ssowens.android.popularmovies.Models.Trailer;
 
 import java.util.List;
 
@@ -35,15 +34,15 @@ public class MovieDetailFragment extends Fragment {
     public static final String ARG_MOVIE_OVERVIEW = "movie_overview";
     public static final String ARG_MOVIE_TRAILER = "movie_trailer";
     public static final String ARG_MOVIE_ID = "id";
-    private static final String VIDEO_ID = "cdgQpa1pUUE";
+    public static final String ARG_TRAILER_KEY = "key";
 
-    private ImageView mImage;
-    private TextView mTitle;
-    private TextView mOverview;
-    private TextView mVoteAverage;
+    private ImageView movieImage;
+    private TextView title;
+    private TextView overview;
+    private TextView voteAverage;
     private TextView releasteDate;
-    private Button playVideoBtn;
-    private RecyclerView trailerRecyclerView;
+    private ImageButton playVideoBtn;
+    private TextView trailerTextView;
 
     private String mImageUrl;
     private String mMovieTitleStr;
@@ -52,19 +51,16 @@ public class MovieDetailFragment extends Fragment {
     private String mOverviewStr;
     private String trailerStr;
     private String movieIdStr;
-    private int startIndexEditText = 0;
-
-
-    public ProgressBar progressBar;
-
+    private String trailerKey;
 
     public static MovieDetailFragment newInstance(String movieUrl,
                                                   String movieTitle,
                                                   String releaseDate,
                                                   String voteAverage,
                                                   String overview,
+                                                  String movieId,
                                                   String trailer,
-                                                  String movieId) {
+                                                  String key) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_MOVIE_URL, movieUrl);
         args.putSerializable(ARG_MOVIE_TITLE, movieTitle);
@@ -73,6 +69,7 @@ public class MovieDetailFragment extends Fragment {
         args.putSerializable(ARG_MOVIE_OVERVIEW, overview);
         args.putSerializable(ARG_MOVIE_TRAILER, trailer);
         args.putSerializable(ARG_MOVIE_ID, movieId);
+        args.putSerializable(ARG_TRAILER_KEY, key);
 
         MovieDetailFragment fragment = new MovieDetailFragment();
         fragment.setArguments(args);
@@ -90,34 +87,36 @@ public class MovieDetailFragment extends Fragment {
         mOverviewStr = (String) getArguments().getSerializable(ARG_MOVIE_OVERVIEW);
         trailerStr = (String) getArguments().getSerializable(ARG_MOVIE_TRAILER);
         movieIdStr = (String) getArguments().getSerializable(ARG_MOVIE_ID);
+        trailerKey = (String) getArguments().getSerializable(ARG_TRAILER_KEY);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         Activity activity = getActivity();
         Context context = getContext();
 
-        mImage = view.findViewById(R.id.image);
-        mTitle = view.findViewById(R.id.movie_title_text_view);
-        mOverview = view.findViewById(R.id.movie_overview_text_view);
-        mVoteAverage = view.findViewById(R.id.movie_vote_average_text_view);
+        movieImage = view.findViewById(R.id.image);
+        title = view.findViewById(R.id.movie_title_text_view);
+        overview = view.findViewById(R.id.movie_overview_text_view);
+        voteAverage = view.findViewById(R.id.movie_vote_average_text_view);
         releasteDate = view.findViewById(R.id.movie_release_date_text_view);
         playVideoBtn = view.findViewById(R.id.start_video_button);
-        trailerRecyclerView = view.findViewById(R.id.trailer_recycler_view);
-        trailerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayout trailerLayout = view.findViewById(R.id.trailer_area);
+        trailerTextView = view.findViewById(R.id.trailer_text_view);
 
-        // Create a progress bar
-        // progressBar = new ProgressBar(this);
-
-        Picasso.with(getContext()).load(mImageUrl).into(mImage);
-        mTitle.setText(mMovieTitleStr);
-        mOverview.setText(mOverviewStr);
-        mVoteAverage.setText(mVoteAverateStr);
+        Picasso.with(getContext()).load(mImageUrl).into(movieImage);
+        title.setText(mMovieTitleStr);
+        overview.setText(mOverviewStr);
+        voteAverage.setText(mVoteAverateStr);
         releasteDate.setText(mReleaseDateStr);
-        playVideoBtn.setOnClickListener(new View.OnClickListener() {
+        if (trailerStr != null) {
+            trailerTextView.setText("Trailer 1");
+        }
+        trailerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -128,7 +127,7 @@ public class MovieDetailFragment extends Fragment {
 
                 // Start YouTube Video
                 Intent intent = YouTubeIntents.createPlayVideoIntentWithOptions(getActivity(),
-                        VIDEO_ID, true, false);
+                        trailerKey, true, false);
                 getActivity().startActivity(intent);
 
                 if (intent != null) {
@@ -142,7 +141,6 @@ public class MovieDetailFragment extends Fragment {
                 }
             }
         });
-
         return view;
     }
 
@@ -163,37 +161,9 @@ public class MovieDetailFragment extends Fragment {
         return resolveInfo != null && !resolveInfo.isEmpty();
     }
 
-    private class TrailerListFragment extends RecyclerView.ViewHolder {
-
-        public TrailerListFragment(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.list_item_trailer, parent, false));
-        }
+    private void updateUI() {
+        Trailer trailers = new Trailer();
+        List<TrailerItem> trailerItem = trailers.getTrailerItems();
     }
 
-    private class TrailerAdapter extends RecyclerView.Adapter<TrailerHolder> {
-
-        @Override
-        public TrailerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-
-            return null;
-        }
-
-        @Override
-        public void onBindViewHolder(TrailerHolder holder, int position) {
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return 0;
-        }
-    }
-
-    private class TrailerHolder extends RecyclerView.ViewHolder {
-
-        public TrailerHolder(View itemView) {
-            super(itemView);
-        }
-    }
 }

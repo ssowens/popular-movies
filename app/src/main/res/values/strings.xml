@@ -20,7 +20,7 @@
     <string name="pref_movies_key" translatable="false">movies</string>
     <string name="movie_overview">Movie Overview</string>
     <string name="movie_image">Movie Image</string>
-    <string name="movie_title">Original Movie Title</string>
+    <string name="movie_title">Original Movies Title</string>
     <string name="movie_vote_average">Movie Vote Average</string>
     <string name="movie_release_date">Movie Release Date</string>
     <string name="title_activity_detail">Movie Detail</string>
@@ -30,6 +30,7 @@
     <string name="seek_to">Jump To</string>
     <string name="seek_to_hint">Seconds</string>
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+    <string name="no_trailers_avail">No Trailers Available</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

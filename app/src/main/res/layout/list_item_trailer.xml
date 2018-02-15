@@ -11,11 +11,11 @@
         android:src="@android:drawable/ic_media_play"
         android:scaleType="center"
         tools:text="play_button"
-        android:background="@color/colorPrimary"/>
+        android:background="@android:color/holo_green_dark"/>
 
     <TextView
         android:id="@+id/trailer_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Trailer 1"/>
 

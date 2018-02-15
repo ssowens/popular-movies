@@ -9,7 +9,7 @@ import java.util.UUID;
  * Updated by Sheila Owens on 1/14/18
  */
 
-class MovieItem {
+public class MovieItem {
 
     private static final String TAG = "MovieItem";
 

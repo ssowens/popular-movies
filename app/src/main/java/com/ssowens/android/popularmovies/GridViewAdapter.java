@@ -22,7 +22,7 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
     private Context mContext;
     private ArrayList<MovieItem> mGridMovies = new ArrayList<>();
 
-    public GridViewAdapter(Context context, ArrayList<MovieItem> dataObjects) {
+    GridViewAdapter(Context context, ArrayList<MovieItem> dataObjects) {
         super(context, 0, dataObjects);
         this.mContext = context;
         this.mGridMovies = dataObjects;
@@ -33,7 +33,7 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
      *
      * @param objects
      */
-    public void setGridData(ArrayList<MovieItem> objects) {
+    void setGridData(ArrayList<MovieItem> objects) {
         this.mGridMovies = objects;
         notifyDataSetChanged();
     }
@@ -50,7 +50,7 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
         if (rootView == null) {
             rootView = LayoutInflater.from(getContext()).inflate(
                     R.layout.grid_item_layout, parent, false);
-            imageView = (ImageView) rootView.findViewById(R.id.grid_item_image);
+            imageView = rootView.findViewById(R.id.grid_item_image);
             rootView.setTag(imageView);
 
         } else {

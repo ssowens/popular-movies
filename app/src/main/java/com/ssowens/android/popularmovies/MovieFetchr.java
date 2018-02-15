@@ -35,7 +35,7 @@ public class MovieFetchr {
 
 
         JSONArray moviesJsonArray = jsonBody.getJSONArray(TMDB_RESULTS);
-        Log.i("Number of Movies = ", "" + moviesJsonArray.length());
+        Log.i("Number of Movie = ", "" + moviesJsonArray.length());
 
         ArrayList<MovieItem> movies = new ArrayList<>();
 
