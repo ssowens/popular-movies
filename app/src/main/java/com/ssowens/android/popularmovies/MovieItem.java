@@ -1,6 +1,10 @@
 package com.ssowens.android.popularmovies;
 
+import android.databinding.BindingAdapter;
+import android.widget.ImageView;
+
 import com.google.gson.annotations.SerializedName;
+import com.squareup.picasso.Picasso;
 
 import java.util.UUID;
 
@@ -41,11 +45,15 @@ public class MovieItem {
     private String trailer;
     private String reviews;
 
-    public MovieItem(String voteAverage, String originalTitle, String image, String overview) {
+    public MovieItem(String voteAverage, String originalTitle, String imageUrl, String overview) {
         this.voteAverage = voteAverage;
         this.originalTitle = originalTitle;
-        this.image = image;
+        this.image = imageUrl;
         this.overview = overview;
+    }
+
+    public MovieItem(String imageUrl) {
+        this.image = imageUrl;
     }
 
     MovieItem() {
@@ -122,6 +130,20 @@ public class MovieItem {
 
     public void setReviews(String reviewsUrl) {
         this.reviews = reviewsUrl;
+    }
+
+    public String getImageUrl() {
+        // The URL will come from the a model (i.e. Movie)
+        return image;
+    }
+
+    @BindingAdapter({"bind.imageUrl"})
+    public static void loadImage(ImageView view, String imageUrl) {
+        Picasso.with(view.getContext())
+                .load(imageUrl)
+                //  .placeholder(R.drawable.placeholder)
+                .resize(200,200)
+                .into(view);
     }
 
     @Override

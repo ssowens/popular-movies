@@ -6,9 +6,9 @@ import com.google.gson.annotations.SerializedName;
  * Created by Sheila Owens on 2/4/18.
  */
 
-public class TrailerItem {
+public class MovieVideo {
 
-    private static final String TAG = "TrailerItem";
+    private static final String TAG = "MovieVideo";
 
     @SerializedName("id")
     private String trailerId;

@@ -1,12 +1,13 @@
 package com.ssowens.android.popularmovies;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,15 @@ import android.widget.TextView;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeIntents;
-import com.squareup.picasso.Picasso;
 import com.ssowens.android.popularmovies.Models.Trailer;
+import com.ssowens.android.popularmovies.databinding.FragmentMovieDetailBinding;
 
 import java.util.List;
 
 public class MovieDetailFragment extends Fragment {
+
+    private static final String TAG = MovieDetailFragment.class.getSimpleName();
+
 
     private static final int REQ_START_STANDALONE_PLAYER = 1;
     private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
@@ -37,21 +41,20 @@ public class MovieDetailFragment extends Fragment {
     public static final String ARG_TRAILER_KEY = "key";
 
     private ImageView movieImage;
-    private TextView title;
-    private TextView overview;
-    private TextView voteAverage;
-    private TextView releasteDate;
     private ImageButton playVideoBtn;
     private TextView trailerTextView;
+    private Trailer trailer;
 
-    private String mImageUrl;
-    private String mMovieTitleStr;
-    private String mReleaseDateStr;
-    private String mVoteAverateStr;
-    private String mOverviewStr;
+    private String imageUrl;
+    private String movieTitleStr;
+    private String releaseDateStr;
+    private String voteAverateStr;
+    private String overviewStr;
     private String trailerStr;
     private String movieIdStr;
     private String trailerKey;
+
+    private LinearLayout trailerLayout;
 
     public static MovieDetailFragment newInstance(String movieUrl,
                                                   String movieTitle,
@@ -80,42 +83,37 @@ public class MovieDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mImageUrl = (String) getArguments().getSerializable(ARG_MOVIE_URL);
-        mMovieTitleStr = (String) getArguments().getSerializable(ARG_MOVIE_TITLE);
-        mReleaseDateStr = (String) getArguments().getSerializable(ARG_MOVIE_RELEASE_DATE);
-        mVoteAverateStr = (String) getArguments().getSerializable(ARG_MOVIE_VOTE_AVERAGE);
-        mOverviewStr = (String) getArguments().getSerializable(ARG_MOVIE_OVERVIEW);
+        imageUrl = (String) getArguments().getSerializable(ARG_MOVIE_URL);
+        movieTitleStr = (String) getArguments().getSerializable(ARG_MOVIE_TITLE);
+        releaseDateStr = (String) getArguments().getSerializable(ARG_MOVIE_RELEASE_DATE);
+        voteAverateStr = (String) getArguments().getSerializable(ARG_MOVIE_VOTE_AVERAGE);
+        overviewStr = (String) getArguments().getSerializable(ARG_MOVIE_OVERVIEW);
         trailerStr = (String) getArguments().getSerializable(ARG_MOVIE_TRAILER);
         movieIdStr = (String) getArguments().getSerializable(ARG_MOVIE_ID);
         trailerKey = (String) getArguments().getSerializable(ARG_TRAILER_KEY);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
-        Activity activity = getActivity();
-        Context context = getContext();
+        // Setup DataBinding
+        FragmentMovieDetailBinding binding = DataBindingUtil.inflate(inflater, R.layout
+                .fragment_movie_detail, container, false);
+        View view = binding.getRoot();
+        binding.setViewModel(new MovieItem(imageUrl));
 
-        movieImage = view.findViewById(R.id.image);
-        title = view.findViewById(R.id.movie_title_text_view);
-        overview = view.findViewById(R.id.movie_overview_text_view);
-        voteAverage = view.findViewById(R.id.movie_vote_average_text_view);
-        releasteDate = view.findViewById(R.id.movie_release_date_text_view);
-        playVideoBtn = view.findViewById(R.id.start_video_button);
-        LinearLayout trailerLayout = view.findViewById(R.id.trailer_area);
-        trailerTextView = view.findViewById(R.id.trailer_text_view);
+        trailerLayout = view.findViewById(R.id.trailer_area);
 
-        Picasso.with(getContext()).load(mImageUrl).into(movieImage);
-        title.setText(mMovieTitleStr);
-        overview.setText(mOverviewStr);
-        voteAverage.setText(mVoteAverateStr);
-        releasteDate.setText(mReleaseDateStr);
-        if (trailerStr != null) {
-            trailerTextView.setText("Trailer 1");
-        }
+        binding.movieTitleTextView.setText(movieTitleStr);
+        binding.movieOverviewTextView.setText(overviewStr);
+        binding.movieVoteAverageTextView.setText(voteAverateStr);
+        binding.movieReleaseDateTextView.setText(releaseDateStr);
+
+//        ArrayList<MovieVideo> test = (ArrayList<MovieVideo>) trailer.getTrailerItems();
+//        if (trailer.getTrailerItems() == null) {
+//            appendTrailers(trailer.getTrailerItems());
+//        }
         trailerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,6 +142,27 @@ public class MovieDetailFragment extends Fragment {
         return view;
     }
 
+    public void appendTrailers(List<MovieVideo> trailers) {
+        Log.v(TAG, "appendTrailers");
+//        String baseUrl = getContext().getString(R.string.youtubeUrlBase);
+        String baseUrl = "https://www.youtube.com/watch?v=";
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        for (MovieVideo video : trailers) {
+            if (video.getType().equals("Trailer")) {
+                View listItem = inflater.inflate(R.layout.list_item_trailer, trailerLayout, false);
+
+                TextView title = listItem.findViewById(R.id.title);
+                ImageView play = listItem.findViewById(R.id.play_button);
+
+                title.setText(video.getName());
+//                play.setOnClickListener(new ClickListener(baseUrl + video.getKey()));
+
+                trailerLayout.addView(listItem);
+            }
+        }
+    }
+
+
     private int parseInt(String text, int defaultValue) {
         if (!TextUtils.isEmpty(text)) {
             try {
@@ -160,10 +179,4 @@ public class MovieDetailFragment extends Fragment {
                 (intent, 0);
         return resolveInfo != null && !resolveInfo.isEmpty();
     }
-
-    private void updateUI() {
-        Trailer trailers = new Trailer();
-        List<TrailerItem> trailerItem = trailers.getTrailerItems();
-    }
-
 }

@@ -137,12 +137,9 @@ public class MovieGridFragment extends Fragment {
                 String voteAverage = item.getVoteAverage();
                 String overview = item.getOverView();
                 int movieId = item.getMovieId();
-                //TODO fetch trailer
                 String trailerUrl = TRAILER_START + movieId + TRAILER_END;
                 Log.i(TAG, "trailerURL=>" + trailerUrl);
                 fetchTrailers(trailerUrl);
-                String trailer = trailerUrl;
-                Log.i(TAG, "trailer=>" + trailer);
 
                 Intent intent = MovieDetailActivity.newIntent(getActivity(),
                         imageUrl,
@@ -151,7 +148,7 @@ public class MovieGridFragment extends Fragment {
                         voteAverage,
                         overview,
                         String.valueOf(movieId),
-                        trailer,
+                        trailerUrl,
                         key);
                 startActivity(intent);
             }
@@ -172,7 +169,6 @@ public class MovieGridFragment extends Fragment {
 
     private void fetchTrailers(String endPoint) {
         Log.i(TAG, "fetchTrailers()");
-        //TODO populate trailers
         StringRequest request = new StringRequest(Request.Method.GET, endPoint, onTrailerLoaded,
                 onTrailerError);
         requestQueue.add(request);
@@ -219,11 +215,11 @@ public class MovieGridFragment extends Fragment {
             Log.i(TAG, "Loading trailer");
             List<Trailer> trailerObject = Arrays.asList(gson.fromJson(response, Trailer.class));
             Log.i("MovieGridFragment", trailerObject.size() + " trailers loaded.");
-            ArrayList<TrailerItem> trailerItems = new ArrayList<>();
+            ArrayList<MovieVideo> trailerItems = new ArrayList<>();
 
             for (Trailer trailer : trailerObject) {
                 for (int iter = 0; iter < trailer.getTrailerItems().size(); iter++) {
-                    TrailerItem eachTrailer = new TrailerItem();
+                    MovieVideo eachTrailer = new MovieVideo();
                     if (trailer.getTrailerItems().get(iter).getType().equals("Trailer")) {
                         eachTrailer.setIso_639_1(trailer.getTrailerItems().get(iter).getIso_639_1());
                         eachTrailer.setIso_3166_1(trailer.getTrailerItems().get(iter).getIso_3166_1());
@@ -236,7 +232,8 @@ public class MovieGridFragment extends Fragment {
                     }
                 }
             }
-            updateTrailerList(trailerItems);
+            Trailer trailer = new Trailer();
+            trailer.setTrailerItems(trailerItems);
         }
     };
 
@@ -281,20 +278,20 @@ public class MovieGridFragment extends Fragment {
         progressBar.setVisibility(View.GONE);
     }
 
-    public void updateTrailerList(ArrayList<TrailerItem> trailerItems) {
+    public void updateTrailerList(ArrayList<MovieVideo> trailerItems) {
         Log.v(TAG, "gridItems = " + trailerItems.size());
-        for (TrailerItem trailerItem : trailerItems) {
-            if (trailerItem.getType().equals("Trailer")) {
-                key = trailerItem.getKey();
+        for (MovieVideo movieVideo : trailerItems) {
+            if (movieVideo.getType().equals("Trailer")) {
+                key = movieVideo.getKey();
                 Log.i(TAG, "Sheila Key => " + key);
-                trailerItem.setIso_639_1((trailerItem.getIso_639_1()));
-                trailerItem.setIso_3166_1(trailerItem.getIso_3166_1());
-                trailerItem.setKey(trailerItem.getKey());
-                trailerItem.setName(trailerItem.getName());
-                trailerItem.setSite(trailerItem.getSite());
-                trailerItem.setSize(trailerItem.getSize());
-                trailerItem.setType(trailerItem.getType());
-                trailerItems.add(trailerItem);
+                movieVideo.setIso_639_1((movieVideo.getIso_639_1()));
+                movieVideo.setIso_3166_1(movieVideo.getIso_3166_1());
+                movieVideo.setKey(movieVideo.getKey());
+                movieVideo.setName(movieVideo.getName());
+                movieVideo.setSite(movieVideo.getSite());
+                movieVideo.setSize(movieVideo.getSize());
+                movieVideo.setType(movieVideo.getType());
+                trailerItems.add(movieVideo);
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.ssowens.android.popularmovies.Models;
 
 import com.google.gson.annotations.SerializedName;
-import com.ssowens.android.popularmovies.TrailerItem;
+import com.ssowens.android.popularmovies.MovieVideo;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class Trailer {
     private int id;
 
     @SerializedName("results")
-    public List<TrailerItem> trailerItems;
+    public List<MovieVideo> trailerItems;
 
     public int getId() {
         return id;
@@ -26,11 +26,11 @@ public class Trailer {
         this.id = id;
     }
 
-    public List<TrailerItem> getTrailerItems() {
+    public List<MovieVideo> getTrailerItems() {
         return trailerItems;
     }
 
-    public void setTrailerItems(List<TrailerItem> trailerItems) {
+    public void setTrailerItems(List<MovieVideo> trailerItems) {
         this.trailerItems = trailerItems;
     }
 

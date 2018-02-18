@@ -31,6 +31,7 @@
     <string name="seek_to_hint">Seconds</string>
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
     <string name="no_trailers_avail">No Trailers Available</string>
+    <string name="mark_as_favorite">Mark As Favorite</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
