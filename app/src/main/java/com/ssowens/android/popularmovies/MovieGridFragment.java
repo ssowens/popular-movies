@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -25,7 +24,6 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ssowens.android.popularmovies.Models.Movie;
-import com.ssowens.android.popularmovies.Models.Trailer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,26 +57,24 @@ public class MovieGridFragment extends Fragment {
     public static final String TRAILER_URL = "http://api.themoviedb" +
             ".org/3/movie/?api_key=" + API_KEY + "?id=" + VIDEOS;
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
-    public String key = "";
 
 
-    private ProgressBar progressBar;
     private GridViewAdapter gridAdapter;
     public ArrayList<MovieItem> gridData = new ArrayList<>();
+    public ArrayList<String> movieVideoList = new ArrayList<>();
     public ActionBar actionBar;
     private String title;
 
     private RequestQueue requestQueue;
     private Gson gson;
     private String movieId;
+    public String key = "";
 
     private static final String ENDPOINT = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
     private static final String TRAILER_START = "http://api.themoviedb" +
             ".org/3/movie/";
     private static final String TRAILER_END = "/videos?api_key=" + API_KEY;
-
-
     private String endPoint;
 
     public static MovieGridFragment newInstance() {
@@ -101,7 +97,6 @@ public class MovieGridFragment extends Fragment {
         PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
 
         requestQueue = Volley.newRequestQueue(getActivity());
-
         gson = new Gson();
 
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -139,7 +134,6 @@ public class MovieGridFragment extends Fragment {
                 int movieId = item.getMovieId();
                 String trailerUrl = TRAILER_START + movieId + TRAILER_END;
                 Log.i(TAG, "trailerURL=>" + trailerUrl);
-                fetchTrailers(trailerUrl);
 
                 Intent intent = MovieDetailActivity.newIntent(getActivity(),
                         imageUrl,
@@ -153,10 +147,6 @@ public class MovieGridFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
-
         return rootView;
     }
 
@@ -164,13 +154,6 @@ public class MovieGridFragment extends Fragment {
         Log.i(TAG, "fetchMovies()");
         StringRequest request = new StringRequest(Request.Method.GET, endPoint, onMoviesLoaded,
                 onMoviesError);
-        requestQueue.add(request);
-    }
-
-    private void fetchTrailers(String endPoint) {
-        Log.i(TAG, "fetchTrailers()");
-        StringRequest request = new StringRequest(Request.Method.GET, endPoint, onTrailerLoaded,
-                onTrailerError);
         requestQueue.add(request);
     }
 
@@ -208,35 +191,6 @@ public class MovieGridFragment extends Fragment {
         }
     };
 
-    private final Response.Listener<String> onTrailerLoaded = new Response.Listener<String>() {
-
-        @Override
-        public void onResponse(String response) {
-            Log.i(TAG, "Loading trailer");
-            List<Trailer> trailerObject = Arrays.asList(gson.fromJson(response, Trailer.class));
-            Log.i("MovieGridFragment", trailerObject.size() + " trailers loaded.");
-            ArrayList<MovieVideo> trailerItems = new ArrayList<>();
-
-            for (Trailer trailer : trailerObject) {
-                for (int iter = 0; iter < trailer.getTrailerItems().size(); iter++) {
-                    MovieVideo eachTrailer = new MovieVideo();
-                    if (trailer.getTrailerItems().get(iter).getType().equals("Trailer")) {
-                        eachTrailer.setIso_639_1(trailer.getTrailerItems().get(iter).getIso_639_1());
-                        eachTrailer.setIso_3166_1(trailer.getTrailerItems().get(iter).getIso_3166_1());
-                        eachTrailer.setKey(trailer.getTrailerItems().get(iter).getKey());
-                        eachTrailer.setName(trailer.getTrailerItems().get(iter).getName());
-                        eachTrailer.setSite(trailer.getTrailerItems().get(iter).getSite());
-                        eachTrailer.setSize(trailer.getTrailerItems().get(iter).getSize());
-                        eachTrailer.setType(trailer.getTrailerItems().get(iter).getType());
-                        trailerItems.add(eachTrailer);
-                    }
-                }
-            }
-            Trailer trailer = new Trailer();
-            trailer.setTrailerItems(trailerItems);
-        }
-    };
-
     private final Response.ErrorListener onMoviesError = new Response.ErrorListener() {
 
         @Override
@@ -244,15 +198,6 @@ public class MovieGridFragment extends Fragment {
             Log.e("MovieGridFragment", error.toString());
         }
     };
-
-    private final Response.ErrorListener onTrailerError = new Response.ErrorListener() {
-
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Log.e("MovieGridFragment", error.toString());
-        }
-    };
-
 
     private void updateMovies() {
         getMovieSortOrder();
@@ -274,25 +219,6 @@ public class MovieGridFragment extends Fragment {
             gridAdapter.setGridData(gridItems);
         } else {
             Toast.makeText(getActivity(), "Failed to fetch data!", Toast.LENGTH_SHORT).show();
-        }
-        progressBar.setVisibility(View.GONE);
-    }
-
-    public void updateTrailerList(ArrayList<MovieVideo> trailerItems) {
-        Log.v(TAG, "gridItems = " + trailerItems.size());
-        for (MovieVideo movieVideo : trailerItems) {
-            if (movieVideo.getType().equals("Trailer")) {
-                key = movieVideo.getKey();
-                Log.i(TAG, "Sheila Key => " + key);
-                movieVideo.setIso_639_1((movieVideo.getIso_639_1()));
-                movieVideo.setIso_3166_1(movieVideo.getIso_3166_1());
-                movieVideo.setKey(movieVideo.getKey());
-                movieVideo.setName(movieVideo.getName());
-                movieVideo.setSite(movieVideo.getSite());
-                movieVideo.setSize(movieVideo.getSize());
-                movieVideo.setType(movieVideo.getType());
-                trailerItems.add(movieVideo);
-            }
         }
     }
 

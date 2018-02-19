@@ -1,6 +1,8 @@
 package com.ssowens.android.popularmovies;
 
 import android.databinding.BindingAdapter;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.google.gson.annotations.SerializedName;
@@ -92,14 +94,6 @@ public class MovieItem {
         this.movieId = movieId;
     }
 
-    public String getTrailer() {
-        return trailer;
-    }
-
-    public void setTrailer(String trailer) {
-        this.trailer = trailer;
-    }
-
     public String getOverView() {
         return overview;
     }
@@ -135,6 +129,10 @@ public class MovieItem {
     public String getImageUrl() {
         // The URL will come from the a model (i.e. Movie)
         return image;
+    }
+
+    public void onClickTrailer(View view) {
+        Log.i(TAG, "onClickTrailer");
     }
 
     @BindingAdapter({"bind.imageUrl"})

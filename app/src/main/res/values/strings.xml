@@ -31,8 +31,9 @@
     <string name="seek_to_hint">Seconds</string>
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
     <string name="no_trailers_avail">No Trailers Available</string>
-    <string name="mark_as_favorite">Mark As Favorite</string>
-
+    <string name="mark_as_favorite">MARK AS FAVORITE</string>
+    <string name="api_key">f804facb811415aff9fb6ec12310e4a6</string>
+    <string name="youtube_base_url">https://www.youtube.com/watch?v=</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

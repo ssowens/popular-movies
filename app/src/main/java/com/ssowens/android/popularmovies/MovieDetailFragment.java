@@ -1,12 +1,11 @@
 package com.ssowens.android.popularmovies;
 
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +15,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubeIntents;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.ssowens.android.popularmovies.Models.Trailer;
 import com.ssowens.android.popularmovies.databinding.FragmentMovieDetailBinding;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MovieDetailFragment extends Fragment {
@@ -43,7 +50,6 @@ public class MovieDetailFragment extends Fragment {
     private ImageView movieImage;
     private ImageButton playVideoBtn;
     private TextView trailerTextView;
-    private Trailer trailer;
 
     private String imageUrl;
     private String movieTitleStr;
@@ -53,8 +59,11 @@ public class MovieDetailFragment extends Fragment {
     private String trailerStr;
     private String movieIdStr;
     private String trailerKey;
-
+    public String key = "";
+    private Gson gson;
+    private RequestQueue requestQueue;
     private LinearLayout trailerLayout;
+    private Trailer trailer;
 
     public static MovieDetailFragment newInstance(String movieUrl,
                                                   String movieTitle,
@@ -91,6 +100,15 @@ public class MovieDetailFragment extends Fragment {
         trailerStr = (String) getArguments().getSerializable(ARG_MOVIE_TRAILER);
         movieIdStr = (String) getArguments().getSerializable(ARG_MOVIE_ID);
         trailerKey = (String) getArguments().getSerializable(ARG_TRAILER_KEY);
+
+        requestQueue = Volley.newRequestQueue(getActivity());
+        gson = new Gson();
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setDateFormat("M/d/yy hh:mm a");
+        gson = gsonBuilder.create();
+
+        fetchTrailers(trailerStr);
     }
 
     @Override
@@ -103,80 +121,92 @@ public class MovieDetailFragment extends Fragment {
         View view = binding.getRoot();
         binding.setViewModel(new MovieItem(imageUrl));
 
-        trailerLayout = view.findViewById(R.id.trailer_area);
+        trailerLayout = view.findViewById(R.id.trailer_list);
 
         binding.movieTitleTextView.setText(movieTitleStr);
         binding.movieOverviewTextView.setText(overviewStr);
         binding.movieVoteAverageTextView.setText(voteAverateStr);
         binding.movieReleaseDateTextView.setText(releaseDateStr);
 
-//        ArrayList<MovieVideo> test = (ArrayList<MovieVideo>) trailer.getTrailerItems();
-//        if (trailer.getTrailerItems() == null) {
-//            appendTrailers(trailer.getTrailerItems());
-//        }
-        trailerLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                int startIndex = parseInt("0", 0);
-                int startTimeMillis = parseInt("0", 0) * 1000;
-                boolean autoplay = false;
-                boolean lightboxMode = false;
-
-                // Start YouTube Video
-                Intent intent = YouTubeIntents.createPlayVideoIntentWithOptions(getActivity(),
-                        trailerKey, true, false);
-                getActivity().startActivity(intent);
-
-                if (intent != null) {
-                    if (canResolveIntent(intent)) {
-                        startActivityForResult(intent, REQ_START_STANDALONE_PLAYER);
-                    } else {
-                        // Could not resolve the intent - must need to install or update the YouTube API service.
-                        YouTubeInitializationResult.SERVICE_MISSING
-                                .getErrorDialog(getActivity(), REQ_RESOLVE_SERVICE_MISSING).show();
-                    }
-                }
-            }
-        });
         return view;
     }
 
     public void appendTrailers(List<MovieVideo> trailers) {
         Log.v(TAG, "appendTrailers");
-//        String baseUrl = getContext().getString(R.string.youtubeUrlBase);
-        String baseUrl = "https://www.youtube.com/watch?v=";
+        String youTubebaseUrl = getContext().getString(R.string.youtube_base_url);
         LayoutInflater inflater = LayoutInflater.from(getContext());
         for (MovieVideo video : trailers) {
             if (video.getType().equals("Trailer")) {
-                View listItem = inflater.inflate(R.layout.list_item_trailer, trailerLayout, false);
+                View listItem = inflater.inflate(R.layout.list_item_trailer, trailerLayout,
+                        false);
 
-                TextView title = listItem.findViewById(R.id.title);
+                TextView title = listItem.findViewById(R.id.trailer_title);
                 ImageView play = listItem.findViewById(R.id.play_button);
 
                 title.setText(video.getName());
-//                play.setOnClickListener(new ClickListener(baseUrl + video.getKey()));
+                play.setOnClickListener(new TrailerOnClickListener(youTubebaseUrl + video.getKey()));
 
                 trailerLayout.addView(listItem);
             }
         }
     }
 
+    public class TrailerOnClickListener implements View.OnClickListener {
 
-    private int parseInt(String text, int defaultValue) {
-        if (!TextUtils.isEmpty(text)) {
-            try {
-                return Integer.parseInt(text);
-            } catch (NumberFormatException e) {
-                // fall through
-            }
+        String trailerUrl;
+
+        public TrailerOnClickListener(String trailerUrl) {
+            this.trailerUrl = trailerUrl;
         }
-        return defaultValue;
+
+        @Override
+        public void onClick(View v) {
+            getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl)));
+        }
     }
 
-    private boolean canResolveIntent(Intent intent) {
-        List<ResolveInfo> resolveInfo = getActivity().getPackageManager().queryIntentActivities
-                (intent, 0);
-        return resolveInfo != null && !resolveInfo.isEmpty();
+    private void fetchTrailers(String endPoint) {
+        Log.i(TAG, "fetchTrailers()");
+        StringRequest request = new StringRequest(Request.Method.GET, endPoint, onTrailerLoaded,
+                onTrailerError);
+        requestQueue.add(request);
     }
+
+    private final Response.Listener<String> onTrailerLoaded = new Response.Listener<String>() {
+
+        @Override
+        public void onResponse(String response) {
+            Log.i(TAG, "Loading trailer");
+            List<Trailer> trailerObject = Arrays.asList(gson.fromJson(response, Trailer.class));
+            Log.i("MovieGridFragment", trailerObject.size() + " trailers loaded.");
+            ArrayList<MovieVideo> trailerItems = new ArrayList<>();
+
+            for (Trailer trailer : trailerObject) {
+                for (int iter = 0; iter < trailer.getTrailerItems().size(); iter++) {
+                    MovieVideo eachTrailer = new MovieVideo();
+                    if (trailer.getTrailerItems().get(iter).getType().equals("Trailer")) {
+                        eachTrailer.setIso_639_1(trailer.getTrailerItems().get(iter).getIso_639_1());
+                        eachTrailer.setIso_3166_1(trailer.getTrailerItems().get(iter).getIso_3166_1());
+                        eachTrailer.setKey(trailer.getTrailerItems().get(iter).getKey());
+                        eachTrailer.setName(trailer.getTrailerItems().get(iter).getName());
+                        eachTrailer.setSite(trailer.getTrailerItems().get(iter).getSite());
+                        eachTrailer.setSize(trailer.getTrailerItems().get(iter).getSize());
+                        eachTrailer.setType(trailer.getTrailerItems().get(iter).getType());
+                        trailerItems.add(eachTrailer);
+                    }
+                }
+            }
+            appendTrailers(trailerItems);
+        }
+    };
+
+    private final Response.ErrorListener onTrailerError = new Response.ErrorListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("MovieGridFragment", error.toString());
+        }
+    };
+
+
 }
