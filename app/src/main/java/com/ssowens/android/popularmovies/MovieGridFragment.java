@@ -45,8 +45,6 @@ public class MovieGridFragment extends Fragment {
     private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
     private static final String BASE_URL = "http://api.themoviedb" +
             ".org/3/movie/";
-    private static final String VIDEOS = "&append_to_response=videos";
-    private static final String REVIEWS = "&append_to_response=reviews";
     public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
     public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
@@ -54,14 +52,11 @@ public class MovieGridFragment extends Fragment {
 
     public static final String FAVORITES_URL = "http://api.themoviedb" +
             ".org/3/movie/top_rated?api_key=" + API_KEY;
-    public static final String TRAILER_URL = "http://api.themoviedb" +
-            ".org/3/movie/?api_key=" + API_KEY + "?id=" + VIDEOS;
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
 
 
     private GridViewAdapter gridAdapter;
     public ArrayList<MovieItem> gridData = new ArrayList<>();
-    public ArrayList<String> movieVideoList = new ArrayList<>();
     public ActionBar actionBar;
     private String title;
 
@@ -142,8 +137,7 @@ public class MovieGridFragment extends Fragment {
                         voteAverage,
                         overview,
                         String.valueOf(movieId),
-                        trailerUrl,
-                        key);
+                        trailerUrl);
                 startActivity(intent);
             }
         });

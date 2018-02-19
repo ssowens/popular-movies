@@ -25,6 +25,7 @@
     <string name="movie_release_date">Movie Release Date</string>
     <string name="title_activity_detail">Movie Detail</string>
     <string name="trailers_label">Trailers:</string>
+    <string name="reviews_label">Reviews:</string>
     <string name="play_video">Play</string>
     <string name="player_error">Error initializing YouTube player: %s</string>
     <string name="seek_to">Jump To</string>
@@ -34,6 +35,8 @@
     <string name="mark_as_favorite">MARK AS FAVORITE</string>
     <string name="api_key">f804facb811415aff9fb6ec12310e4a6</string>
     <string name="youtube_base_url">https://www.youtube.com/watch?v=</string>
+    <string name="trailer_start">http://api.themoviedb.org/3/movie/</string>
+    <string name="trailer_end">/videos?api_key=</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -2,9 +2,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="viewModel"
-            type="com.ssowens.android.popularmovies.MovieItem" />
+            type="com.ssowens.android.popularmovies.MovieItem"/>
     </data>
 
     <ScrollView
@@ -47,19 +48,19 @@
                     android:layout_alignParentLeft="true"
                     android:contentDescription="@string/movie_image"
                     android:hint="@string/movie_image"
-                    app:bind.imageUrl="@{viewModel.imageUrl}"
-                    android:scaleType="centerCrop"/>
+                    android:scaleType="centerCrop"
+                    app:bind.imageUrl="@{viewModel.imageUrl}"/>
 
                 <TextView
                     android:id="@+id/movie_vote_average_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="50dp"
                     android:layout_toRightOf="@id/image"
                     android:hint="@string/movie_vote_average"
+                    android:paddingBottom="10dp"
                     android:paddingLeft="20dp"
                     android:paddingStart="20dp"
-                    android:paddingBottom="10dp"
+                    android:paddingTop="50dp"
                     tools:text="User Rating"/>
 
                 <TextView
@@ -67,10 +68,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/movie_vote_average_text_view"
+                    android:layout_marginLeft="20dp"
                     android:layout_toRightOf="@id/image"
                     android:hint="@string/movie_release_date"
                     android:paddingBottom="10dp"
-                    android:layout_marginLeft="20dp"
                     tools:text="Release Date"/>
 
                 <TextView
@@ -78,9 +79,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/movie_release_date_text_view"
-                    android:layout_toRightOf="@id/image"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
+                    android:layout_toRightOf="@id/image"
                     android:background="#008675"
                     android:text="@string/mark_as_favorite"
                     tools:text="Mark As Favorite"/>
@@ -121,11 +122,26 @@
                 android:orientation="vertical">
             </LinearLayout>
 
-
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:paddingLeft="20dp"
+                android:paddingStart="20dp"
+                android:paddingTop="5dp"
+                android:text="@string/reviews_label"/>
+
+            <LinearLayout
+                android:id="@+id/review_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
 
         </LinearLayout>
 

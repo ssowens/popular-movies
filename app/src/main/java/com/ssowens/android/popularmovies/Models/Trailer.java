@@ -11,8 +11,6 @@ import java.util.List;
 
 public class Trailer {
 
-    private static final String TAG = "Trailer";
-
     private int id;
 
     @SerializedName("results")
@@ -28,10 +26,6 @@ public class Trailer {
 
     public List<MovieVideo> getTrailerItems() {
         return trailerItems;
-    }
-
-    public void setTrailerItems(List<MovieVideo> trailerItems) {
-        this.trailerItems = trailerItems;
     }
 
     @Override

@@ -8,8 +8,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class MovieVideo {
 
-    private static final String TAG = "MovieVideo";
-
     @SerializedName("id")
     private String trailerId;
 

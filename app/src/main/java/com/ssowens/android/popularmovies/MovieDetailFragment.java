@@ -34,10 +34,6 @@ public class MovieDetailFragment extends Fragment {
 
     private static final String TAG = MovieDetailFragment.class.getSimpleName();
 
-
-    private static final int REQ_START_STANDALONE_PLAYER = 1;
-    private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
-
     public static final String ARG_MOVIE_URL = "movie_url";
     public static final String ARG_MOVIE_TITLE = "movie_title";
     public static final String ARG_MOVIE_RELEASE_DATE = "movie_release_date";
@@ -71,8 +67,7 @@ public class MovieDetailFragment extends Fragment {
                                                   String voteAverage,
                                                   String overview,
                                                   String movieId,
-                                                  String trailer,
-                                                  String key) {
+                                                  String trailer) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_MOVIE_URL, movieUrl);
         args.putSerializable(ARG_MOVIE_TITLE, movieTitle);
@@ -81,7 +76,6 @@ public class MovieDetailFragment extends Fragment {
         args.putSerializable(ARG_MOVIE_OVERVIEW, overview);
         args.putSerializable(ARG_MOVIE_TRAILER, trailer);
         args.putSerializable(ARG_MOVIE_ID, movieId);
-        args.putSerializable(ARG_TRAILER_KEY, key);
 
         MovieDetailFragment fragment = new MovieDetailFragment();
         fragment.setArguments(args);
@@ -99,7 +93,6 @@ public class MovieDetailFragment extends Fragment {
         overviewStr = (String) getArguments().getSerializable(ARG_MOVIE_OVERVIEW);
         trailerStr = (String) getArguments().getSerializable(ARG_MOVIE_TRAILER);
         movieIdStr = (String) getArguments().getSerializable(ARG_MOVIE_ID);
-        trailerKey = (String) getArguments().getSerializable(ARG_TRAILER_KEY);
 
         requestQueue = Volley.newRequestQueue(getActivity());
         gson = new Gson();
@@ -207,6 +200,4 @@ public class MovieDetailFragment extends Fragment {
             Log.e("MovieGridFragment", error.toString());
         }
     };
-
-
 }

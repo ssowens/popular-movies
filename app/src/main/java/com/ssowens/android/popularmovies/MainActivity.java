@@ -25,7 +25,6 @@ public class MainActivity extends SingleFragmentActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.i(TAG, "onCreateOptionsMenu()");
