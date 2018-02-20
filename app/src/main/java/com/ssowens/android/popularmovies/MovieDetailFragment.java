@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ssowens.android.popularmovies.Models.MovieReview;
+import com.ssowens.android.popularmovies.Models.Review;
 import com.ssowens.android.popularmovies.Models.Trailer;
 import com.ssowens.android.popularmovies.databinding.FragmentMovieDetailBinding;
 
@@ -40,8 +44,8 @@ public class MovieDetailFragment extends Fragment {
     public static final String ARG_MOVIE_VOTE_AVERAGE = "movie_vote_average";
     public static final String ARG_MOVIE_OVERVIEW = "movie_overview";
     public static final String ARG_MOVIE_TRAILER = "movie_trailer";
+    public static final String ARG_MOVIE_REVIEW = "movie_review";
     public static final String ARG_MOVIE_ID = "id";
-    public static final String ARG_TRAILER_KEY = "key";
 
     private ImageView movieImage;
     private ImageButton playVideoBtn;
@@ -53,12 +57,13 @@ public class MovieDetailFragment extends Fragment {
     private String voteAverateStr;
     private String overviewStr;
     private String trailerStr;
+    private String reviewStr;
     private String movieIdStr;
-    private String trailerKey;
     public String key = "";
     private Gson gson;
     private RequestQueue requestQueue;
     private LinearLayout trailerLayout;
+    private LinearLayout reviewLayout;
     private Trailer trailer;
 
     public static MovieDetailFragment newInstance(String movieUrl,
@@ -67,7 +72,8 @@ public class MovieDetailFragment extends Fragment {
                                                   String voteAverage,
                                                   String overview,
                                                   String movieId,
-                                                  String trailer) {
+                                                  String trailer,
+                                                  String reviewUrl) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_MOVIE_URL, movieUrl);
         args.putSerializable(ARG_MOVIE_TITLE, movieTitle);
@@ -76,6 +82,7 @@ public class MovieDetailFragment extends Fragment {
         args.putSerializable(ARG_MOVIE_OVERVIEW, overview);
         args.putSerializable(ARG_MOVIE_TRAILER, trailer);
         args.putSerializable(ARG_MOVIE_ID, movieId);
+        args.putSerializable(ARG_MOVIE_REVIEW, reviewUrl);
 
         MovieDetailFragment fragment = new MovieDetailFragment();
         fragment.setArguments(args);
@@ -92,6 +99,7 @@ public class MovieDetailFragment extends Fragment {
         voteAverateStr = (String) getArguments().getSerializable(ARG_MOVIE_VOTE_AVERAGE);
         overviewStr = (String) getArguments().getSerializable(ARG_MOVIE_OVERVIEW);
         trailerStr = (String) getArguments().getSerializable(ARG_MOVIE_TRAILER);
+        reviewStr = (String) getArguments().getSerializable(ARG_MOVIE_REVIEW);
         movieIdStr = (String) getArguments().getSerializable(ARG_MOVIE_ID);
 
         requestQueue = Volley.newRequestQueue(getActivity());
@@ -102,6 +110,7 @@ public class MovieDetailFragment extends Fragment {
         gson = gsonBuilder.create();
 
         fetchTrailers(trailerStr);
+        fetchReviews(reviewStr);
     }
 
     @Override
@@ -115,6 +124,7 @@ public class MovieDetailFragment extends Fragment {
         binding.setViewModel(new MovieItem(imageUrl));
 
         trailerLayout = view.findViewById(R.id.trailer_list);
+        reviewLayout = view.findViewById(R.id.review_list);
 
         binding.movieTitleTextView.setText(movieTitleStr);
         binding.movieOverviewTextView.setText(overviewStr);
@@ -144,6 +154,32 @@ public class MovieDetailFragment extends Fragment {
         }
     }
 
+    public void appendReviews(List<MovieReview> reviews) {
+        Log.v(TAG, "appendReviews");
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        for (MovieReview review : reviews) {
+            View listItem = inflater.inflate(R.layout.list_item_review, reviewLayout, false);
+
+            TextView content = listItem.findViewById(R.id.review_content);
+            TextView author = listItem.findViewById(R.id.review_author);
+            TextView fullReview = listItem.findViewById(R.id.full_review);
+            TextView url = listItem.findViewById(R.id.reviewUrl);
+
+            fullReview.setClickable(true);
+            fullReview.setMovementMethod(LinkMovementMethod.getInstance());
+            String link = "<a href='" + review.getUrl() + "'> Full " +
+                    "Review </a>";
+            Log.i(TAG, "link" + link);
+
+            content.setText(review.getContent());
+            author.setText(review.getAuthor());
+            fullReview.setText(Html.fromHtml(link));
+
+            reviewLayout.addView(listItem);
+        }
+    }
+
+
     public class TrailerOnClickListener implements View.OnClickListener {
 
         String trailerUrl;
@@ -165,13 +201,19 @@ public class MovieDetailFragment extends Fragment {
         requestQueue.add(request);
     }
 
+    private void fetchReviews(String endPoint) {
+        Log.i(TAG, "fetchReviews");
+        StringRequest request = new StringRequest(Request.Method.GET, endPoint, onReviewLoaded,
+                onReviewError);
+        requestQueue.add(request);
+    }
+
     private final Response.Listener<String> onTrailerLoaded = new Response.Listener<String>() {
 
         @Override
         public void onResponse(String response) {
-            Log.i(TAG, "Loading trailer");
+            Log.i(TAG, "Loading trailers");
             List<Trailer> trailerObject = Arrays.asList(gson.fromJson(response, Trailer.class));
-            Log.i("MovieGridFragment", trailerObject.size() + " trailers loaded.");
             ArrayList<MovieVideo> trailerItems = new ArrayList<>();
 
             for (Trailer trailer : trailerObject) {
@@ -193,7 +235,38 @@ public class MovieDetailFragment extends Fragment {
         }
     };
 
+    private final Response.Listener<String> onReviewLoaded = new Response.Listener<String>() {
+
+        @Override
+        public void onResponse(String response) {
+            Log.i(TAG, "Loading reviews");
+            List<Review> reviewObject = Arrays.asList(gson.fromJson(response, Review.class));
+            Log.i(TAG, reviewObject.size() + " reviews loaded");
+            ArrayList<MovieReview> reviewItems = new ArrayList<>();
+
+            for (Review review : reviewObject) {
+                for (int iter = 0; iter < review.getReviewItems().size(); iter++) {
+                    MovieReview eachReview = new MovieReview();
+                    eachReview.setReviewId(review.getReviewItems().get(iter).getReviewId());
+                    eachReview.setAuthor(review.getReviewItems().get(iter).getAuthor());
+                    eachReview.setContent(review.getReviewItems().get(iter).getContent());
+                    eachReview.setUrl(review.getReviewItems().get(iter).getUrl());
+                    reviewItems.add(eachReview);
+                }
+            }
+            appendReviews(reviewItems);
+        }
+    };
+
     private final Response.ErrorListener onTrailerError = new Response.ErrorListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("MovieGridFragment", error.toString());
+        }
+    };
+
+    private final Response.ErrorListener onReviewError = new Response.ErrorListener() {
 
         @Override
         public void onErrorResponse(VolleyError error) {

@@ -67,9 +67,11 @@ public class MovieGridFragment extends Fragment {
 
     private static final String ENDPOINT = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
-    private static final String TRAILER_START = "http://api.themoviedb" +
+    private static final String TRAILER_REVIEW_BASE = "http://api.themoviedb" +
             ".org/3/movie/";
-    private static final String TRAILER_END = "/videos?api_key=" + API_KEY;
+    private static final String TRAILER_PARAMETER = "/videos?api_key=" + API_KEY;
+    private static final String TRAILER_APPEND = "&append_to_response=videos";
+    private static final String REVIEW_APPEND = "/reviews?api_key=" + API_KEY;
     private String endPoint;
 
     public static MovieGridFragment newInstance() {
@@ -98,8 +100,7 @@ public class MovieGridFragment extends Fragment {
         gsonBuilder.setDateFormat("M/d/yy hh:mm a");
         gson = gsonBuilder.create();
 
-        endPoint = ENDPOINT;
-        fetchMovies(endPoint);
+        fetchMovies(ENDPOINT);
     }
 
     @Override
@@ -127,8 +128,10 @@ public class MovieGridFragment extends Fragment {
                 String voteAverage = item.getVoteAverage();
                 String overview = item.getOverView();
                 int movieId = item.getMovieId();
-                String trailerUrl = TRAILER_START + movieId + TRAILER_END;
+                String trailerUrl = TRAILER_REVIEW_BASE + movieId + TRAILER_PARAMETER;
                 Log.i(TAG, "trailerURL=>" + trailerUrl);
+                String reviewUrl = TRAILER_REVIEW_BASE + movieId + REVIEW_APPEND;
+                Log.i(TAG, "reviewURL=>" + reviewUrl);
 
                 Intent intent = MovieDetailActivity.newIntent(getActivity(),
                         imageUrl,
@@ -137,7 +140,8 @@ public class MovieGridFragment extends Fragment {
                         voteAverage,
                         overview,
                         String.valueOf(movieId),
-                        trailerUrl);
+                        trailerUrl,
+                        reviewUrl);
                 startActivity(intent);
             }
         });
