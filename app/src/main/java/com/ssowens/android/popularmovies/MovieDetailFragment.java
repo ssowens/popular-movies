@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -23,6 +24,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ssowens.android.popularmovies.Models.MovieReview;
@@ -56,10 +58,6 @@ public class MovieDetailFragment extends Fragment {
     private String releaseDateStr;
     private String voteAverateStr;
     private String overviewStr;
-    private String trailerStr;
-    private String reviewStr;
-    private String movieIdStr;
-    public String key = "";
     private Gson gson;
     private RequestQueue requestQueue;
     private LinearLayout trailerLayout;
@@ -98,9 +96,8 @@ public class MovieDetailFragment extends Fragment {
         releaseDateStr = (String) getArguments().getSerializable(ARG_MOVIE_RELEASE_DATE);
         voteAverateStr = (String) getArguments().getSerializable(ARG_MOVIE_VOTE_AVERAGE);
         overviewStr = (String) getArguments().getSerializable(ARG_MOVIE_OVERVIEW);
-        trailerStr = (String) getArguments().getSerializable(ARG_MOVIE_TRAILER);
-        reviewStr = (String) getArguments().getSerializable(ARG_MOVIE_REVIEW);
-        movieIdStr = (String) getArguments().getSerializable(ARG_MOVIE_ID);
+        String trailerStr = (String) getArguments().getSerializable(ARG_MOVIE_TRAILER);
+        String reviewStr = (String) getArguments().getSerializable(ARG_MOVIE_REVIEW);
 
         requestQueue = Volley.newRequestQueue(getActivity());
         gson = new Gson();
@@ -130,6 +127,23 @@ public class MovieDetailFragment extends Fragment {
         binding.movieOverviewTextView.setText(overviewStr);
         binding.movieVoteAverageTextView.setText(voteAverateStr);
         binding.movieReleaseDateTextView.setText(releaseDateStr);
+
+        MaterialFavoriteButton favoriteButton = new MaterialFavoriteButton.Builder(getActivity())
+                .favorite(true)
+                .color(MaterialFavoriteButton.STYLE_BLACK)
+                .type(MaterialFavoriteButton.STYLE_HEART)
+                .rotationDuration(400)
+                .create();
+
+        binding.movieFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+            @Override
+            public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean
+                    favorite) {
+                Snackbar.make(buttonView, getString(R.string.favorite_snack) + favorite,
+                        Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
 
         return view;
     }
@@ -162,18 +176,17 @@ public class MovieDetailFragment extends Fragment {
 
             TextView content = listItem.findViewById(R.id.review_content);
             TextView author = listItem.findViewById(R.id.review_author);
-            TextView fullReview = listItem.findViewById(R.id.full_review);
-            TextView url = listItem.findViewById(R.id.reviewUrl);
+            TextView fullReviewUrl = listItem.findViewById(R.id.reviewUrl);
 
-            fullReview.setClickable(true);
-            fullReview.setMovementMethod(LinkMovementMethod.getInstance());
+            fullReviewUrl.setClickable(true);
+            fullReviewUrl.setMovementMethod(LinkMovementMethod.getInstance());
             String link = "<a href='" + review.getUrl() + "'> Full " +
                     "Review </a>";
             Log.i(TAG, "link" + link);
 
             content.setText(review.getContent());
             author.setText(review.getAuthor());
-            fullReview.setText(Html.fromHtml(link));
+            fullReviewUrl.setText(Html.fromHtml(link));
 
             reviewLayout.addView(listItem);
         }
@@ -241,7 +254,6 @@ public class MovieDetailFragment extends Fragment {
         public void onResponse(String response) {
             Log.i(TAG, "Loading reviews");
             List<Review> reviewObject = Arrays.asList(gson.fromJson(response, Review.class));
-            Log.i(TAG, reviewObject.size() + " reviews loaded");
             ArrayList<MovieReview> reviewItems = new ArrayList<>();
 
             for (Review review : reviewObject) {

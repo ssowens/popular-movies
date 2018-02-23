@@ -59,11 +59,8 @@ public class MovieGridFragment extends Fragment {
     public ArrayList<MovieItem> gridData = new ArrayList<>();
     public ActionBar actionBar;
     private String title;
-
     private RequestQueue requestQueue;
     private Gson gson;
-    private String movieId;
-    public String key = "";
 
     private static final String ENDPOINT = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
@@ -72,7 +69,6 @@ public class MovieGridFragment extends Fragment {
     private static final String TRAILER_PARAMETER = "/videos?api_key=" + API_KEY;
     private static final String TRAILER_APPEND = "&append_to_response=videos";
     private static final String REVIEW_APPEND = "/reviews?api_key=" + API_KEY;
-    private String endPoint;
 
     public static MovieGridFragment newInstance() {
 
@@ -180,7 +176,6 @@ public class MovieGridFragment extends Fragment {
                     // Get the movie image
                     String posterPath = movie.getMovieItems().get(iter).getImage();
                     String posterUrl = POSTER_BASE_URL + posterPath;
-                    Log.v(TAG, "Poster URL = " + posterUrl);
                     eachMovie.setImage(posterUrl);
                     items.add(eachMovie);
                 }
@@ -216,7 +211,7 @@ public class MovieGridFragment extends Fragment {
             gridAdapter.addAll(gridItems);
             gridAdapter.setGridData(gridItems);
         } else {
-            Toast.makeText(getActivity(), "Failed to fetch data!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.no_data_fetched), Toast.LENGTH_SHORT).show();
         }
     }
 

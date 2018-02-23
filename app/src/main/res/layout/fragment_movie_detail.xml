@@ -28,6 +28,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center_vertical"
                 android:background="#008675"
+                android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:paddingStart="20dp"
                 android:textColor="@color/colorText"
@@ -74,17 +75,13 @@
                     android:paddingBottom="10dp"
                     tools:text="Release Date"/>
 
-                <TextView
+                <com.github.ivbaranov.mfb.MaterialFavoriteButton
                     android:id="@+id/movie_favorite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/movie_release_date_text_view"
-                    android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
-                    android:layout_toRightOf="@id/image"
-                    android:background="#008675"
-                    android:text="@string/mark_as_favorite"
-                    tools:text="Mark As Favorite"/>
+                    android:layout_below="@id/movie_release_date_text_view"
+                    android:layout_toRightOf="@id/image"/>
 
             </RelativeLayout>
 

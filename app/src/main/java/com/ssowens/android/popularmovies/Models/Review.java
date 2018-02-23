@@ -27,7 +27,4 @@ public class Review {
         return reviewItems;
     }
 
-    public void setReviewItems(List<MovieReview> reviewItems) {
-        this.reviewItems = reviewItems;
-    }
 }

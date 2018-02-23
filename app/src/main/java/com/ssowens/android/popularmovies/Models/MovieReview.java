@@ -10,7 +10,6 @@ public class MovieReview {
 
     @SerializedName("id")
     private String reviewId;
-
     private String author;
     private String content;
     private String url;
