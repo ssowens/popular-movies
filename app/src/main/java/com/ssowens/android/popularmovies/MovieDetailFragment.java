@@ -1,6 +1,9 @@
 package com.ssowens.android.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,10 +30,12 @@ import com.android.volley.toolbox.Volley;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ssowens.android.popularmovies.Models.MovieReview;
-import com.ssowens.android.popularmovies.Models.Review;
-import com.ssowens.android.popularmovies.Models.Trailer;
+import com.ssowens.android.popularmovies.data.FavoriteMovieSchema;
+import com.ssowens.android.popularmovies.data.FavoriteMovieDbHelper;
 import com.ssowens.android.popularmovies.databinding.FragmentMovieDetailBinding;
+import com.ssowens.android.popularmovies.models.MovieReview;
+import com.ssowens.android.popularmovies.models.Review;
+import com.ssowens.android.popularmovies.models.Trailer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +58,7 @@ public class MovieDetailFragment extends Fragment {
     private ImageButton playVideoBtn;
     private TextView trailerTextView;
 
+    private long movieId;
     private String imageUrl;
     private String movieTitleStr;
     private String releaseDateStr;
@@ -63,6 +69,7 @@ public class MovieDetailFragment extends Fragment {
     private LinearLayout trailerLayout;
     private LinearLayout reviewLayout;
     private Trailer trailer;
+    SQLiteDatabase db;
 
     public static MovieDetailFragment newInstance(String movieUrl,
                                                   String movieTitle,
@@ -90,6 +97,15 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String movieStr = (String) getArguments().getSerializable(ARG_MOVIE_ID);
+        Log.i(TAG,"Sheila This is the movieID => " + movieStr);
+        try {
+            movieId = Long.parseLong(String.valueOf(movieStr));
+            Log.i(TAG, "Sheila convert movieId to integer");
+        } catch (Exception ex) {
+            Log.e(TAG, "Sheila ERROR:Converting Movie Id from a string to integer ~ failed");
+        }
 
         imageUrl = (String) getArguments().getSerializable(ARG_MOVIE_URL);
         movieTitleStr = (String) getArguments().getSerializable(ARG_MOVIE_TITLE);
@@ -141,12 +157,45 @@ public class MovieDetailFragment extends Fragment {
                     favorite) {
                 Snackbar.make(buttonView, getString(R.string.favorite_snack) + favorite,
                         Snackbar.LENGTH_SHORT).show();
+                // TODO Get Movie Id and insert it into the database
+
+                saveFavorites();  // This can be moved up
+                addFavoriteMovies(movieId);
+                Log.i(TAG, "Sheila movie id is what");
+                // Retrieving the Favorite Movies from the db
+                Cursor cursor = getFavoriteMovies();
+                // Create an arraylist with the updated movies that I saved
             }
         });
 
 
         return view;
     }
+
+    public void saveFavorites() {
+
+        FavoriteMovieDbHelper dbHelper = new FavoriteMovieDbHelper(getActivity());
+        db = dbHelper.getWritableDatabase();
+    }
+
+    public Cursor getFavoriteMovies() {
+        return db.query(FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    public long addFavoriteMovies(long movieId) {
+        Log.v(TAG, "addFavoriteMovies");
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FavoriteMovieSchema.FavoriteMovieEntry.COLUMN_MOVIE_ID, movieId);
+        return db.insert(FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
+                null, contentValues);
+    }
+
 
     public void appendTrailers(List<MovieVideo> trailers) {
         Log.v(TAG, "appendTrailers");
@@ -191,7 +240,6 @@ public class MovieDetailFragment extends Fragment {
             reviewLayout.addView(listItem);
         }
     }
-
 
     public class TrailerOnClickListener implements View.OnClickListener {
 

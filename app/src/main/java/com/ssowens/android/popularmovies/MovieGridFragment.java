@@ -23,7 +23,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ssowens.android.popularmovies.Models.Movie;
+import com.ssowens.android.popularmovies.models.Movie;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +71,6 @@ public class MovieGridFragment extends Fragment {
     private static final String REVIEW_APPEND = "/reviews?api_key=" + API_KEY;
 
     public static MovieGridFragment newInstance() {
-
         return new MovieGridFragment();
     }
 
@@ -111,6 +110,7 @@ public class MovieGridFragment extends Fragment {
         // Get a reference to the GridView, and attach this adapter to it.
         gridAdapter = new GridViewAdapter(getActivity(), gridData);
         mGridView.setAdapter(gridAdapter);
+
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -242,6 +242,9 @@ public class MovieGridFragment extends Fragment {
                 title = getString(R.string.pref_sort_top_rate);
                 break;
         }
-        fetchMovies(movie_url);
+        if (title.equals(getString(R.string.pref_sort_favorites))) {
+            Log.i(TAG,"Sheila This is my favorites");
+        } else
+            fetchMovies(movie_url);
     }
 }
