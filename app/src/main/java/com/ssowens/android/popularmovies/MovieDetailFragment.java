@@ -2,7 +2,7 @@ package com.ssowens.android.popularmovies;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -30,9 +30,10 @@ import com.android.volley.toolbox.Volley;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ssowens.android.popularmovies.data.FavoriteMovieSchema;
 import com.ssowens.android.popularmovies.data.FavoriteMovieDbHelper;
+import com.ssowens.android.popularmovies.data.FavoriteMovieSchema;
 import com.ssowens.android.popularmovies.databinding.FragmentMovieDetailBinding;
+import com.ssowens.android.popularmovies.models.FavoriteMovie;
 import com.ssowens.android.popularmovies.models.MovieReview;
 import com.ssowens.android.popularmovies.models.Review;
 import com.ssowens.android.popularmovies.models.Trailer;
@@ -58,7 +59,7 @@ public class MovieDetailFragment extends Fragment {
     private ImageButton playVideoBtn;
     private TextView trailerTextView;
 
-    private long movieId;
+    private int movieId;
     private String imageUrl;
     private String movieTitleStr;
     private String releaseDateStr;
@@ -99,9 +100,11 @@ public class MovieDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         String movieStr = (String) getArguments().getSerializable(ARG_MOVIE_ID);
-        Log.i(TAG,"Sheila This is the movieID => " + movieStr);
+        Log.i(TAG, "Sheila This is the movieID => " + movieStr);
         try {
-            movieId = Long.parseLong(String.valueOf(movieStr));
+            //TODO THIS MIGHT CAUSE A PROBLEM
+            // movieId = Long.parseLong(String.valueOf(movieStr));
+            movieId = Integer.parseInt(String.valueOf(movieStr));
             Log.i(TAG, "Sheila convert movieId to integer");
         } catch (Exception ex) {
             Log.e(TAG, "Sheila ERROR:Converting Movie Id from a string to integer ~ failed");
@@ -155,47 +158,44 @@ public class MovieDetailFragment extends Fragment {
             @Override
             public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean
                     favorite) {
-                Snackbar.make(buttonView, getString(R.string.favorite_snack) + favorite,
-                        Snackbar.LENGTH_SHORT).show();
-                // TODO Get Movie Id and insert it into the database
-
-                saveFavorites();  // This can be moved up
-                addFavoriteMovies(movieId);
-                Log.i(TAG, "Sheila movie id is what");
-                // Retrieving the Favorite Movies from the db
-                Cursor cursor = getFavoriteMovies();
-                // Create an arraylist with the updated movies that I saved
+                FavoriteMovie favoriteMovie = new FavoriteMovie();
+                favoriteMovie.setMovieId((long) movieId);
+                long newRowId = addFavoriteMovies(movieId, imageUrl);
+                Log.i(TAG, "Sheila New Movie id = " + Long.toString(newRowId));
             }
         });
-
 
         return view;
     }
 
-    public void saveFavorites() {
-
+    public void initializeDbForWriting() {
+        // Get the data repository in write mode
         FavoriteMovieDbHelper dbHelper = new FavoriteMovieDbHelper(getActivity());
         db = dbHelper.getWritableDatabase();
     }
 
-    public Cursor getFavoriteMovies() {
-        return db.query(FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-    }
-
-    public long addFavoriteMovies(long movieId) {
+    public long addFavoriteMovies(long movieId, String posterPath) {
         Log.v(TAG, "addFavoriteMovies");
+        long newRowId = 0;
+        initializeDbForWriting();
         ContentValues contentValues = new ContentValues();
         contentValues.put(FavoriteMovieSchema.FavoriteMovieEntry.COLUMN_MOVIE_ID, movieId);
-        return db.insert(FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
-                null, contentValues);
+        contentValues.put(FavoriteMovieSchema.FavoriteMovieEntry.COLUMN_POSTER_PATH, posterPath);
+        try {
+            newRowId = db.insert(FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
+                    null, contentValues);
+        } catch (SQLiteConstraintException e) {
+            Log.i(TAG, "Error - " + e.toString());
+        }
+        if (newRowId != -1) {
+            Snackbar.make(getView(), getString(R.string.favorite_added),
+                    Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(getView(), getString(R.string.duplicate_favorite),
+                    Snackbar.LENGTH_SHORT).show();
+        }
+        return newRowId;
     }
-
 
     public void appendTrailers(List<MovieVideo> trailers) {
         Log.v(TAG, "appendTrailers");

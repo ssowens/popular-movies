@@ -37,16 +37,15 @@ public class FavoriteMovieDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        final String SQL_CREATE_FAVORITE_MOVIE_TABLE =
         /*
          * FavoriteMovieEntry did not explicitly declare a column called "_ID". However,
          * FavoriteMovieEntry implements the interface, "BaseColumns", which does have a field
          * named "_ID". We use that here to designate our table's primary key.
          */
-
+        final String SQL_CREATE_FAVORITE_MOVIE_TABLE =
                 "CREATE TABLE " + FavoriteMovieEntry.TABLE_NAME + " (" +
-                        FavoriteMovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        FavoriteMovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL " + ");";
+                        FavoriteMovieEntry.COLUMN_MOVIE_ID + " INTEGER PRIMARY KEY, " +
+                        FavoriteMovieEntry.COLUMN_POSTER_PATH + " TEXT" + ");";
         Log.i(TAG, "Sheila " + SQL_CREATE_FAVORITE_MOVIE_TABLE);
         db.execSQL(SQL_CREATE_FAVORITE_MOVIE_TABLE);
 

@@ -2,6 +2,8 @@ package com.ssowens.android.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -23,6 +25,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ssowens.android.popularmovies.data.FavoriteMovieDbHelper;
+import com.ssowens.android.popularmovies.data.FavoriteMovieSchema;
+import com.ssowens.android.popularmovies.data.FavoritesCursorWrapper;
 import com.ssowens.android.popularmovies.models.Movie;
 
 import java.util.ArrayList;
@@ -49,9 +54,6 @@ public class MovieGridFragment extends Fragment {
             ".org/3/movie/popular?api_key=" + API_KEY;
     public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/top_rated?api_key=" + API_KEY;
-
-    public static final String FAVORITES_URL = "http://api.themoviedb" +
-            ".org/3/movie/top_rated?api_key=" + API_KEY;
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
 
 
@@ -61,13 +63,13 @@ public class MovieGridFragment extends Fragment {
     private String title;
     private RequestQueue requestQueue;
     private Gson gson;
+    SQLiteDatabase db;
 
     private static final String ENDPOINT = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
     private static final String TRAILER_REVIEW_BASE = "http://api.themoviedb" +
             ".org/3/movie/";
     private static final String TRAILER_PARAMETER = "/videos?api_key=" + API_KEY;
-    private static final String TRAILER_APPEND = "&append_to_response=videos";
     private static final String REVIEW_APPEND = "/reviews?api_key=" + API_KEY;
 
     public static MovieGridFragment newInstance() {
@@ -123,7 +125,7 @@ public class MovieGridFragment extends Fragment {
                 String releaseDate = item.getReleaseDate();
                 String voteAverage = item.getVoteAverage();
                 String overview = item.getOverView();
-                int movieId = item.getMovieId();
+                long movieId = item.getMovieId();
                 String trailerUrl = TRAILER_REVIEW_BASE + movieId + TRAILER_PARAMETER;
                 Log.i(TAG, "trailerURL=>" + trailerUrl);
                 String reviewUrl = TRAILER_REVIEW_BASE + movieId + REVIEW_APPEND;
@@ -203,7 +205,7 @@ public class MovieGridFragment extends Fragment {
         updateMovies();
     }
 
-    public void updateUI(ArrayList<MovieItem> gridItems) {
+    public void updateUI(List<MovieItem> gridItems) {
         Log.v(TAG, "gridItems = " + gridItems.size());
         gridAdapter.clear();
 
@@ -215,10 +217,11 @@ public class MovieGridFragment extends Fragment {
         }
     }
 
+
     public void getMovieSortOrder() {
         Log.v(TAG, "getMovieSortOrder");
-        String movie_url;
-
+        String movie_url = null;
+        boolean favorite = false;
         // Get the movie sort order
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String moviesSortOrder = sharedPref.getString(getString(R.string.pref_movies_key),
@@ -234,17 +237,55 @@ public class MovieGridFragment extends Fragment {
                 title = getString(R.string.pref_sort_top_rate);
                 break;
             case FAVORITE_MOVIES_KEY:
-                movie_url = FAVORITES_URL;
+                favorite = true;
                 title = getString(R.string.pref_sort_favorites);
+                getFavoriteMovies();
                 break;
             default:
                 movie_url = TOP_RATED_MOVIE_URL;
                 title = getString(R.string.pref_sort_top_rate);
                 break;
         }
-        if (title.equals(getString(R.string.pref_sort_favorites))) {
-            Log.i(TAG,"Sheila This is my favorites");
-        } else
+        if (!favorite) {
             fetchMovies(movie_url);
+        }
+    }
+
+    public void initializeDbForReading() {
+        FavoriteMovieDbHelper dbHelper = new FavoriteMovieDbHelper(getActivity());
+        db = dbHelper.getReadableDatabase();
+    }
+
+    private FavoritesCursorWrapper queryFavoriteMovies() {
+        initializeDbForReading();
+        Cursor cursor = db.query(FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        return new FavoritesCursorWrapper(cursor);
+    }
+
+    private List<MovieItem> getFavoriteMovies() {
+        Log.v(TAG, "Sheila getFavoriteMovies");
+        List<MovieItem> favoriteMovieList = new ArrayList<>();
+
+//        FavoritesCursorWrapper cursor = queryFavoriteMovies();
+//
+//        try {
+//            cursor.moveToFirst();
+//            while (!cursor.isAfterLast()) {
+//                favoriteMovieList.add(cursor.getFavoriteMovie());
+//                cursor.moveToNext();
+//            }
+//        } finally {
+//            cursor.close();
+//        }
+//
+//        updateUI(favoriteMovieList);
+        return favoriteMovieList;
+
     }
 }

@@ -17,13 +17,17 @@ import java.util.UUID;
 
 public class MovieItem {
 
+    public MovieItem(int movieId) {
+        this.movieId = movieId;
+    }
+
     private static final String TAG = "MovieItem";
 
     @SerializedName("vote_count")
     private int voteCount;
 
     @SerializedName("id")
-    private int movieId;
+    private long movieId;
 
     boolean video;
 
@@ -58,9 +62,10 @@ public class MovieItem {
         this.image = imageUrl;
     }
 
-    MovieItem() {
+    public MovieItem() {
         mId = UUID.randomUUID();
     }
+
 
     public UUID getId() {
         return mId;
@@ -78,6 +83,14 @@ public class MovieItem {
         this.image = image;
     }
 
+    public String getPoster_path() {
+        return image;
+    }
+
+    public void setPoster_path(String poster_path) {
+        this.image = poster_path;
+    }
+
     String getTitle() {
         return originalTitle;
     }
@@ -86,11 +99,11 @@ public class MovieItem {
         this.originalTitle = title;
     }
 
-    public int getMovieId() {
+    public long getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(int movieId) {
+    public void setMovieId(long movieId) {
         this.movieId = movieId;
     }
 
@@ -139,8 +152,7 @@ public class MovieItem {
     public static void loadImage(ImageView view, String imageUrl) {
         Picasso.with(view.getContext())
                 .load(imageUrl)
-                //  .placeholder(R.drawable.placeholder)
-                .resize(200,200)
+                .resize(200, 200)
                 .into(view);
     }
 

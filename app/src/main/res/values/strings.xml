@@ -39,6 +39,8 @@
     <string name="trailer_end">/videos?api_key=</string>
     <string name="no_data_fetched">Failed to fetch data!</string>
     <string name="favorite_snack">Added as a Favorite Movie: </string>
+    <string name="duplicate_favorite">Already added as a favorite</string>
+    <string name="favorite_added">Favorite Added</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
