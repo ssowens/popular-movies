@@ -1,14 +1,11 @@
 package com.ssowens.android.popularmovies;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -30,10 +27,8 @@ import com.android.volley.toolbox.Volley;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ssowens.android.popularmovies.data.FavoriteMovieDbHelper;
-import com.ssowens.android.popularmovies.data.FavoriteMovieSchema;
+import com.ssowens.android.popularmovies.data.FavoriteMovieLoader;
 import com.ssowens.android.popularmovies.databinding.FragmentMovieDetailBinding;
-import com.ssowens.android.popularmovies.models.FavoriteMovie;
 import com.ssowens.android.popularmovies.models.MovieReview;
 import com.ssowens.android.popularmovies.models.Review;
 import com.ssowens.android.popularmovies.models.Trailer;
@@ -158,43 +153,20 @@ public class MovieDetailFragment extends Fragment {
             @Override
             public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean
                     favorite) {
-                FavoriteMovie favoriteMovie = new FavoriteMovie();
+                MovieItem favoriteMovie = new MovieItem();
                 favoriteMovie.setMovieId((long) movieId);
-                long newRowId = addFavoriteMovies(movieId, imageUrl);
-                Log.i(TAG, "Sheila New Movie id = " + Long.toString(newRowId));
+                favoriteMovie.setImage(imageUrl);
+                favoriteMovie.setTitle(movieTitleStr);
+                favoriteMovie.setOverView(overviewStr);
+                favoriteMovie.setVoteAverage(voteAverateStr);
+                favoriteMovie.setReleaseDate(releaseDateStr);
+
+                FavoriteMovieLoader fav = new FavoriteMovieLoader(getActivity(), getView());
+                fav.addFavoriteMovies(favoriteMovie);
             }
         });
 
         return view;
-    }
-
-    public void initializeDbForWriting() {
-        // Get the data repository in write mode
-        FavoriteMovieDbHelper dbHelper = new FavoriteMovieDbHelper(getActivity());
-        db = dbHelper.getWritableDatabase();
-    }
-
-    public long addFavoriteMovies(long movieId, String posterPath) {
-        Log.v(TAG, "addFavoriteMovies");
-        long newRowId = 0;
-        initializeDbForWriting();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(FavoriteMovieSchema.FavoriteMovieEntry.COLUMN_MOVIE_ID, movieId);
-        contentValues.put(FavoriteMovieSchema.FavoriteMovieEntry.COLUMN_POSTER_PATH, posterPath);
-        try {
-            newRowId = db.insert(FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
-                    null, contentValues);
-        } catch (SQLiteConstraintException e) {
-            Log.i(TAG, "Error - " + e.toString());
-        }
-        if (newRowId != -1) {
-            Snackbar.make(getView(), getString(R.string.favorite_added),
-                    Snackbar.LENGTH_SHORT).show();
-        } else {
-            Snackbar.make(getView(), getString(R.string.duplicate_favorite),
-                    Snackbar.LENGTH_SHORT).show();
-        }
-        return newRowId;
     }
 
     public void appendTrailers(List<MovieVideo> trailers) {

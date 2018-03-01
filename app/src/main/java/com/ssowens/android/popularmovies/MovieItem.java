@@ -58,6 +58,10 @@ public class MovieItem {
         this.overview = overview;
     }
 
+    public MovieItem(Long movieId) {
+        this.movieId = movieId;
+    }
+
     public MovieItem(String imageUrl) {
         this.image = imageUrl;
     }

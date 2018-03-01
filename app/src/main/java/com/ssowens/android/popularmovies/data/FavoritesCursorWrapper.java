@@ -2,7 +2,6 @@ package com.ssowens.android.popularmovies.data;
 
 import android.database.Cursor;
 import android.database.CursorWrapper;
-
 import com.ssowens.android.popularmovies.MovieItem;
 
 /**
@@ -10,8 +9,9 @@ import com.ssowens.android.popularmovies.MovieItem;
  */
 
 public class FavoritesCursorWrapper extends CursorWrapper {
+
     /**
-     * Creates a cursor wrapper.
+     * Creates a cursor wrapper and read from the database.
      *
      * @param cursor The underlying cursor to wrap.
      */
@@ -20,13 +20,14 @@ public class FavoritesCursorWrapper extends CursorWrapper {
     }
 
     public MovieItem getFavoriteMovie() {
+
+        // TODO add the other fields
         long id = getLong(getColumnIndex(FavoriteMovieSchema.FavoriteMovieEntry
                 .COLUMN_MOVIE_ID));
         String poster_path = getString(getColumnIndex(FavoriteMovieSchema.FavoriteMovieEntry
                 .COLUMN_POSTER_PATH));
 
-        MovieItem fav = new MovieItem();
-        fav.setMovieId(id);
+        MovieItem fav = new MovieItem(id);
         fav.setPoster_path(poster_path);
 
         return fav;

@@ -2,8 +2,6 @@ package com.ssowens.android.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -25,9 +23,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ssowens.android.popularmovies.data.FavoriteMovieDbHelper;
-import com.ssowens.android.popularmovies.data.FavoriteMovieSchema;
-import com.ssowens.android.popularmovies.data.FavoritesCursorWrapper;
+import com.ssowens.android.popularmovies.data.FavoriteMovieLoader;
 import com.ssowens.android.popularmovies.models.Movie;
 
 import java.util.ArrayList;
@@ -48,8 +44,8 @@ public class MovieGridFragment extends Fragment {
     private static final String TOP_RATED_MOVIES_KEY = "1";
     private static final String FAVORITE_MOVIES_KEY = "2";
     private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
-    private static final String BASE_URL = "http://api.themoviedb" +
-            ".org/3/movie/";
+//    private static final String BASE_URL = "http://api.themoviedb" +
+//            ".org/3/movie/";
     public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
     public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
@@ -59,11 +55,11 @@ public class MovieGridFragment extends Fragment {
 
     private GridViewAdapter gridAdapter;
     public ArrayList<MovieItem> gridData = new ArrayList<>();
+    public List<MovieItem> movieFav = new ArrayList<>();
     public ActionBar actionBar;
     private String title;
     private RequestQueue requestQueue;
     private Gson gson;
-    SQLiteDatabase db;
 
     private static final String ENDPOINT = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
@@ -217,7 +213,6 @@ public class MovieGridFragment extends Fragment {
         }
     }
 
-
     public void getMovieSortOrder() {
         Log.v(TAG, "getMovieSortOrder");
         String movie_url = null;
@@ -239,7 +234,8 @@ public class MovieGridFragment extends Fragment {
             case FAVORITE_MOVIES_KEY:
                 favorite = true;
                 title = getString(R.string.pref_sort_favorites);
-                getFavoriteMovies();
+                FavoriteMovieLoader loader = new FavoriteMovieLoader(getContext(), getView());
+                movieFav = loader.getFavoriteMovies();
                 break;
             default:
                 movie_url = TOP_RATED_MOVIE_URL;
@@ -248,44 +244,9 @@ public class MovieGridFragment extends Fragment {
         }
         if (!favorite) {
             fetchMovies(movie_url);
+        } else {
+            updateUI(movieFav);
         }
     }
 
-    public void initializeDbForReading() {
-        FavoriteMovieDbHelper dbHelper = new FavoriteMovieDbHelper(getActivity());
-        db = dbHelper.getReadableDatabase();
-    }
-
-    private FavoritesCursorWrapper queryFavoriteMovies() {
-        initializeDbForReading();
-        Cursor cursor = db.query(FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null);
-        return new FavoritesCursorWrapper(cursor);
-    }
-
-    private List<MovieItem> getFavoriteMovies() {
-        Log.v(TAG, "Sheila getFavoriteMovies");
-        List<MovieItem> favoriteMovieList = new ArrayList<>();
-
-//        FavoritesCursorWrapper cursor = queryFavoriteMovies();
-//
-//        try {
-//            cursor.moveToFirst();
-//            while (!cursor.isAfterLast()) {
-//                favoriteMovieList.add(cursor.getFavoriteMovie());
-//                cursor.moveToNext();
-//            }
-//        } finally {
-//            cursor.close();
-//        }
-//
-//        updateUI(favoriteMovieList);
-        return favoriteMovieList;
-
-    }
 }
