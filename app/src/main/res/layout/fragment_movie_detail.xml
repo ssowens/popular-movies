@@ -94,6 +94,8 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:paddingTop="10dp"
+                android:ellipsize="end"
+                android:maxLines="3"
                 tools:text="@string/movie_overview"/>
 
             <View
@@ -136,7 +138,7 @@
             <LinearLayout
                 android:id="@+id/review_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:orientation="vertical">
             </LinearLayout>
 

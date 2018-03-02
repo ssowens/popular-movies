@@ -182,7 +182,8 @@ public class MovieDetailFragment extends Fragment {
                 ImageView play = listItem.findViewById(R.id.play_button);
 
                 title.setText(video.getName());
-                play.setOnClickListener(new TrailerOnClickListener(youTubebaseUrl + video.getKey()));
+                play.setOnClickListener(new TrailerOnClickListener(youTubebaseUrl +
+                        video.getKey()));
 
                 trailerLayout.addView(listItem);
             }

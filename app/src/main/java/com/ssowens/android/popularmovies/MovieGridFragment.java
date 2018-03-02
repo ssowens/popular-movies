@@ -44,15 +44,11 @@ public class MovieGridFragment extends Fragment {
     private static final String TOP_RATED_MOVIES_KEY = "1";
     private static final String FAVORITE_MOVIES_KEY = "2";
     private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
-//    private static final String BASE_URL = "http://api.themoviedb" +
-//            ".org/3/movie/";
     public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
     public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/top_rated?api_key=" + API_KEY;
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
-
-
     private GridViewAdapter gridAdapter;
     public ArrayList<MovieItem> gridData = new ArrayList<>();
     public List<MovieItem> movieFav = new ArrayList<>();
@@ -92,8 +88,6 @@ public class MovieGridFragment extends Fragment {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setDateFormat("M/d/yy hh:mm a");
         gson = gsonBuilder.create();
-
-        fetchMovies(ENDPOINT);
     }
 
     @Override
@@ -202,12 +196,12 @@ public class MovieGridFragment extends Fragment {
     }
 
     public void updateUI(List<MovieItem> gridItems) {
-        Log.v(TAG, "gridItems = " + gridItems.size());
         gridAdapter.clear();
 
         if (gridItems != null) {
             gridAdapter.addAll(gridItems);
             gridAdapter.setGridData(gridItems);
+
         } else {
             Toast.makeText(getActivity(), getString(R.string.no_data_fetched), Toast.LENGTH_SHORT).show();
         }

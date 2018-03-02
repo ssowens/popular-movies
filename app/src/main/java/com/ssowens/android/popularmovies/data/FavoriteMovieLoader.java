@@ -25,12 +25,13 @@ public class FavoriteMovieLoader {
     private static final String TAG = MovieGridFragment.class.getSimpleName();
     private static FavoriteMovieLoader sFavoriteMovieLoader;
     private Context context;
-    private SQLiteDatabase db;
+    private final SQLiteDatabase db;
     private View view;
     private FavoriteMovieDbHelper dbHelper;
 
     public FavoriteMovieLoader(Context context, View view) {
-        this.context = context;
+        this.context = context.getApplicationContext();
+        this.db = new FavoriteMovieDbHelper(context).getWritableDatabase();
         this.view = view;
     }
 
@@ -40,7 +41,6 @@ public class FavoriteMovieLoader {
         List<MovieItem> favoriteMovieList = new ArrayList<>();
 
         FavoritesCursorWrapper cursor = queryFavoriteMovies();
-
         try {
             if (cursor.getCount() == 0) {
                 return null;
@@ -57,24 +57,43 @@ public class FavoriteMovieLoader {
         return favoriteMovieList;
     }
 
-    public void addFavoriteMovies(MovieItem movieItem) {
-        Log.v(TAG, "addFavoriteMovies");
+    public MovieItem getFavoriteMovie(long id) {
+        Log.v(TAG, "Sheila getFavoriteMovie");
+        List<MovieItem> favoriteMovieList = new ArrayList<>();
 
-        long newRowId = 0;
+        FavoritesCursorWrapper cursor = queryFavoriteMovies();
+        try {
+            if (cursor.getCount() == 0) {
+                return null;
+            }
+            cursor.moveToFirst();
+            return cursor.getFavoriteMovie();
+        } finally {
+            cursor.close();
+        }
 
-        dbHelper = new FavoriteMovieDbHelper(context);
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+    }
 
+    private static ContentValues getContentValues(MovieItem movieItem) {
         ContentValues contentValues = new ContentValues();
         //TODO add other fields
         contentValues.put(FavoriteMovieSchema.FavoriteMovieEntry.COLUMN_MOVIE_ID,
                 movieItem.getMovieId());
         contentValues.put(FavoriteMovieSchema.FavoriteMovieEntry.COLUMN_POSTER_PATH,
                 movieItem.getImageUrl());
+
+        return contentValues;
+    }
+
+    public void addFavoriteMovies(MovieItem movieItem) {
+        Log.v(TAG, "addFavoriteMovies");
+        long newRowId = 0;
+
+        ContentValues values = getContentValues(movieItem);
         try {
             newRowId = db.insert(FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
-                    null, contentValues);
-          //  db.close();
+                    null, values);
+            db.close();
         } catch (SQLiteConstraintException e) {
             Log.i(TAG, "Error - " + e.toString());
         }
@@ -92,8 +111,8 @@ public class FavoriteMovieLoader {
     }
 
     public FavoritesCursorWrapper queryFavoriteMovies() {
-       // initializeDbForReading();
-        Cursor cursor = dbHelper.getReadableDatabase().query(
+        // initializeDbForReading();
+        Cursor cursor = db.query(
                 FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
                 null,
                 null,

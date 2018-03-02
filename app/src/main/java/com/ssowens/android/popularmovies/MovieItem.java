@@ -4,10 +4,8 @@ import android.databinding.BindingAdapter;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-
 import com.google.gson.annotations.SerializedName;
 import com.squareup.picasso.Picasso;
-
 import java.util.UUID;
 
 /**
@@ -48,7 +46,6 @@ public class MovieItem {
     private String releaseDate;
 
     private UUID mId;
-    private String trailer;
     private String reviews;
 
     public MovieItem(String voteAverage, String originalTitle, String imageUrl, String overview) {
@@ -174,7 +171,6 @@ public class MovieItem {
                 ", releaseDate='" + releaseDate + '\'' +
                 ", mId=" + mId +
                 ", overView='" + overview + '\'' +
-                ", trailer='" + trailer + '\'' +
                 ", reviews='" + reviews + '\'' +
                 '}';
     }

@@ -16,7 +16,6 @@ public class FavoriteMovieDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "favoriteMovie.db";
     private static final String TAG = FavoriteMovieDbHelper.class.getSimpleName();
 
-
     /*
  * If you change the database schema, you must increment the database version or the onUpgrade
  * method will not be called.
@@ -48,7 +47,6 @@ public class FavoriteMovieDbHelper extends SQLiteOpenHelper {
                         FavoriteMovieEntry.COLUMN_POSTER_PATH + " TEXT" + ");";
         Log.i(TAG, "Sheila " + SQL_CREATE_FAVORITE_MOVIE_TABLE);
         db.execSQL(SQL_CREATE_FAVORITE_MOVIE_TABLE);
-
     }
 
     @Override
