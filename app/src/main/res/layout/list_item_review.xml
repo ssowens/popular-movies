@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:paddingTop="20dp"
+              android:paddingLeft="20dp"
+              android:paddingStart="20dp">
+
+    <TextView
+        android:id="@+id/review_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        tools:text="Review content"/>
+
+    <TextView
+        android:id="@+id/reviewUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColorLink="@android:color/holo_blue_dark"
+        tools:text="www.google.com"/>
+
+    <TextView
+        android:id="@+id/review_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:paddingLeft="20dp"
+        tools:text="Review Author"/>
+
+</LinearLayout>

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Sheila Owens on 12/11/16.
@@ -19,13 +20,13 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
 
     private static final String LOG_TAG = GridViewAdapter.class.getSimpleName();
 
-    private Context mContext;
-    private ArrayList<MovieItem> mGridMovies = new ArrayList<>();
+    private Context context;
+    private List<MovieItem> gridMovies = new ArrayList<>();
 
-    public GridViewAdapter(Context context, ArrayList<MovieItem> dataObjects) {
+    GridViewAdapter(Context context, ArrayList<MovieItem> dataObjects) {
         super(context, 0, dataObjects);
-        this.mContext = context;
-        this.mGridMovies = dataObjects;
+        this.context = context;
+        this.gridMovies = dataObjects;
     }
 
     /**
@@ -33,8 +34,8 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
      *
      * @param objects
      */
-    public void setGridData(ArrayList<MovieItem> objects) {
-        this.mGridMovies = objects;
+    void setGridData(List<MovieItem> objects) {
+        this.gridMovies = objects;
         notifyDataSetChanged();
     }
 
@@ -50,17 +51,16 @@ public class GridViewAdapter extends ArrayAdapter<MovieItem> {
         if (rootView == null) {
             rootView = LayoutInflater.from(getContext()).inflate(
                     R.layout.grid_item_layout, parent, false);
-            imageView = (ImageView) rootView.findViewById(R.id.grid_item_image);
+            imageView = rootView.findViewById(R.id.grid_item_image);
             rootView.setTag(imageView);
 
         } else {
             imageView = (ImageView) rootView.getTag();
         }
 
-        MovieItem item = mGridMovies.get(position);
-        Picasso.with(mContext)
+        MovieItem item = gridMovies.get(position);
+        Picasso.with(context)
                 .load(item.getImage())
-                .placeholder(R.drawable.androidnopixavail)
                 .error(R.drawable.errorimage)
                 .into(imageView);
 

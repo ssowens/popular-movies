@@ -1,7 +1,11 @@
 package com.ssowens.android.popularmovies;
 
+import android.databinding.BindingAdapter;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import com.google.gson.annotations.SerializedName;
-
+import com.squareup.picasso.Picasso;
 import java.util.UUID;
 
 /**
@@ -9,7 +13,11 @@ import java.util.UUID;
  * Updated by Sheila Owens on 1/14/18
  */
 
-class MovieItem {
+public class MovieItem {
+
+    public MovieItem(int movieId) {
+        this.movieId = movieId;
+    }
 
     private static final String TAG = "MovieItem";
 
@@ -17,7 +25,7 @@ class MovieItem {
     private int voteCount;
 
     @SerializedName("id")
-    private int movieId;
+    private long movieId;
 
     boolean video;
 
@@ -38,19 +46,27 @@ class MovieItem {
     private String releaseDate;
 
     private UUID mId;
-    private String trailer;
     private String reviews;
 
-    public MovieItem(String voteAverage, String originalTitle, String image, String overview) {
+    public MovieItem(String voteAverage, String originalTitle, String imageUrl, String overview) {
         this.voteAverage = voteAverage;
         this.originalTitle = originalTitle;
-        this.image = image;
+        this.image = imageUrl;
         this.overview = overview;
     }
 
-    MovieItem() {
+    public MovieItem(Long movieId) {
+        this.movieId = movieId;
+    }
+
+    public MovieItem(String imageUrl) {
+        this.image = imageUrl;
+    }
+
+    public MovieItem() {
         mId = UUID.randomUUID();
     }
+
 
     public UUID getId() {
         return mId;
@@ -68,6 +84,14 @@ class MovieItem {
         this.image = image;
     }
 
+    public String getPoster_path() {
+        return image;
+    }
+
+    public void setPoster_path(String poster_path) {
+        this.image = poster_path;
+    }
+
     String getTitle() {
         return originalTitle;
     }
@@ -76,20 +100,12 @@ class MovieItem {
         this.originalTitle = title;
     }
 
-    public int getMovieId() {
+    public long getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(int movieId) {
+    public void setMovieId(long movieId) {
         this.movieId = movieId;
-    }
-
-    public String getTrailer() {
-        return trailer;
-    }
-
-    public void setTrailer(String trailer) {
-        this.trailer = trailer;
     }
 
     public String getOverView() {
@@ -124,6 +140,23 @@ class MovieItem {
         this.reviews = reviewsUrl;
     }
 
+    public String getImageUrl() {
+        // The URL will come from the a model (i.e. Movie)
+        return image;
+    }
+
+    public void onClickTrailer(View view) {
+        Log.i(TAG, "onClickTrailer");
+    }
+
+    @BindingAdapter({"bind.imageUrl"})
+    public static void loadImage(ImageView view, String imageUrl) {
+        Picasso.with(view.getContext())
+                .load(imageUrl)
+                .resize(200, 200)
+                .into(view);
+    }
+
     @Override
     public String toString() {
         return "MovieItem{" +
@@ -138,7 +171,6 @@ class MovieItem {
                 ", releaseDate='" + releaseDate + '\'' +
                 ", mId=" + mId +
                 ", overView='" + overview + '\'' +
-                ", trailer='" + trailer + '\'' +
                 ", reviews='" + reviews + '\'' +
                 '}';
     }

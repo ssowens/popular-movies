@@ -18,7 +18,6 @@ public class SettingsFragment extends PreferenceFragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        PreferenceManager.setDefaultValues(getContext(), R.xml.preferences, false);
         addPreferencesFromResource(R.xml.preferences);
 
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();

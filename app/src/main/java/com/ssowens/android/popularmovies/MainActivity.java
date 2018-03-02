@@ -25,7 +25,6 @@ public class MainActivity extends SingleFragmentActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.i(TAG, "onCreateOptionsMenu()");
@@ -56,8 +55,7 @@ public class MainActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
         if (isOnline()) {
-            Fragment fragment = MovieGridFragment.newInstance();
-            return fragment;
+            return MovieGridFragment.newInstance();
         } else {
             Toast.makeText(this, "No Internet Service", Toast.LENGTH_SHORT).show();
             return null;

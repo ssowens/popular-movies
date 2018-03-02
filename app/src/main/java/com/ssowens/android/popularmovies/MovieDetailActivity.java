@@ -18,8 +18,6 @@ public class MovieDetailActivity extends SingleFragmentActivity {
     public final static String TAG = "MovieDetailActivity";
 
     private static final int REQ_START_STANDALONE_PLAYER = 1;
-    private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
-
     private static final String EXTRA_MOVIE_URL =
             "com.ssowens.android.popularmovies.movie_url";
     private static final String EXTRA_MOVIE_TITLE =
@@ -32,9 +30,10 @@ public class MovieDetailActivity extends SingleFragmentActivity {
             "com.ssowens.android.popularmovies.movie_overview";
     private static final String EXTRA_MOVIE_TRAILER =
             "com.ssowens.android.popularmovies.videos";
+    private static final String EXTRA_MOVIE_REVIEW =
+            "com.ssowens.android.popularmovies.reviews";
     private static final String EXTRA_MOVIE_ID =
             "com.ssowens.android.poputlarmovies.id";
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,18 +82,21 @@ public class MovieDetailActivity extends SingleFragmentActivity {
                 .getSerializableExtra(EXTRA_VOTE_AVERAGE);
         String overview = (String) getIntent()
                 .getSerializableExtra(EXTRA_MOVIE_OVERVIEW);
-        String trailer = (String) getIntent()
-                .getSerializableExtra(EXTRA_MOVIE_TRAILER);
         String movieId = (String) getIntent()
                 .getSerializableExtra(EXTRA_MOVIE_ID);
+        String trailer = (String) getIntent()
+                .getSerializableExtra(EXTRA_MOVIE_TRAILER);
+        String reviewUrl = (String) getIntent()
+                .getSerializableExtra(EXTRA_MOVIE_REVIEW);
 
         return MovieDetailFragment.newInstance(movieUrl,
                 movieTitle,
                 releaseDate,
                 voteAverage,
                 overview,
+                movieId,
                 trailer,
-                movieId);
+                reviewUrl);
     }
 
     public static Intent newIntent(Context packageContext,
@@ -103,16 +105,18 @@ public class MovieDetailActivity extends SingleFragmentActivity {
                                    String releaseDate,
                                    String voteAverage,
                                    String overview,
+                                   String movieId,
                                    String trailer,
-                                   String movieId) {
+                                   String reviewUrl) {
         Intent intent = new Intent(packageContext, MovieDetailActivity.class);
         intent.putExtra(EXTRA_MOVIE_URL, imageUrl);
         intent.putExtra(EXTRA_MOVIE_TITLE, movieTitle);
         intent.putExtra(EXTRA_MOVIE_RELEASE_DATE, releaseDate);
         intent.putExtra(EXTRA_VOTE_AVERAGE, voteAverage);
         intent.putExtra(EXTRA_MOVIE_OVERVIEW, overview);
-        intent.putExtra(EXTRA_MOVIE_TRAILER, trailer);
         intent.putExtra(EXTRA_MOVIE_ID, movieId);
+        intent.putExtra(EXTRA_MOVIE_TRAILER, trailer);
+        intent.putExtra(EXTRA_MOVIE_REVIEW, reviewUrl);
         return intent;
     }
 
