@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.ImageView;
 import com.google.gson.annotations.SerializedName;
 import com.squareup.picasso.Picasso;
+
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -13,7 +15,7 @@ import java.util.UUID;
  * Updated by Sheila Owens on 1/14/18
  */
 
-public class MovieItem {
+public class MovieItem implements Serializable {
 
     public MovieItem(int movieId) {
         this.movieId = movieId;

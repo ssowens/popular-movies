@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ssowens.android.popularmovies.data.FavoriteMovieLoader;
 import com.ssowens.android.popularmovies.databinding.FragmentMovieDetailBinding;
+import com.ssowens.android.popularmovies.models.Movie;
 import com.ssowens.android.popularmovies.models.MovieReview;
 import com.ssowens.android.popularmovies.models.Review;
 import com.ssowens.android.popularmovies.models.Trailer;
@@ -37,24 +38,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.ssowens.android.popularmovies.MovieGridFragment.REVIEW_APPEND;
+import static com.ssowens.android.popularmovies.MovieGridFragment.TRAILER_PARAMETER;
+import static com.ssowens.android.popularmovies.MovieGridFragment.TRAILER_REVIEW_BASE;
+
 public class MovieDetailFragment extends Fragment {
 
     private static final String TAG = MovieDetailFragment.class.getSimpleName();
 
     public static final String ARG_MOVIE_URL = "movie_url";
-    public static final String ARG_MOVIE_TITLE = "movie_title";
-    public static final String ARG_MOVIE_RELEASE_DATE = "movie_release_date";
-    public static final String ARG_MOVIE_VOTE_AVERAGE = "movie_vote_average";
-    public static final String ARG_MOVIE_OVERVIEW = "movie_overview";
-    public static final String ARG_MOVIE_TRAILER = "movie_trailer";
-    public static final String ARG_MOVIE_REVIEW = "movie_review";
-    public static final String ARG_MOVIE_ID = "id";
 
     private ImageView movieImage;
     private ImageButton playVideoBtn;
     private TextView trailerTextView;
 
-    private int movieId;
+    private long movieId;
     private String imageUrl;
     private String movieTitleStr;
     private String releaseDateStr;
@@ -67,23 +65,9 @@ public class MovieDetailFragment extends Fragment {
     private Trailer trailer;
     SQLiteDatabase db;
 
-    public static MovieDetailFragment newInstance(String movieUrl,
-                                                  String movieTitle,
-                                                  String releaseDate,
-                                                  String voteAverage,
-                                                  String overview,
-                                                  String movieId,
-                                                  String trailer,
-                                                  String reviewUrl) {
+    public static MovieDetailFragment newInstance(MovieItem iteml) {
         Bundle args = new Bundle();
-        args.putSerializable(ARG_MOVIE_URL, movieUrl);
-        args.putSerializable(ARG_MOVIE_TITLE, movieTitle);
-        args.putSerializable(ARG_MOVIE_RELEASE_DATE, releaseDate);
-        args.putSerializable(ARG_MOVIE_VOTE_AVERAGE, voteAverage);
-        args.putSerializable(ARG_MOVIE_OVERVIEW, overview);
-        args.putSerializable(ARG_MOVIE_TRAILER, trailer);
-        args.putSerializable(ARG_MOVIE_ID, movieId);
-        args.putSerializable(ARG_MOVIE_REVIEW, reviewUrl);
+        args.putSerializable(ARG_MOVIE_URL, iteml);
 
         MovieDetailFragment fragment = new MovieDetailFragment();
         fragment.setArguments(args);
@@ -93,35 +77,28 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MovieItem movieItem = (MovieItem) getArguments().getSerializable(ARG_MOVIE_URL);
+        if (movieItem != null) {
+            imageUrl = movieItem.getImageUrl();
+            movieTitleStr = movieItem.getTitle();
+            releaseDateStr = movieItem.getReleaseDate();
+            voteAverateStr = movieItem.getVoteAverage();
+            overviewStr = movieItem.getOverView();
 
-        String movieStr = (String) getArguments().getSerializable(ARG_MOVIE_ID);
-        Log.i(TAG, "Sheila This is the movieID => " + movieStr);
-        try {
-            //TODO THIS MIGHT CAUSE A PROBLEM
-            // movieId = Long.parseLong(String.valueOf(movieStr));
-            movieId = Integer.parseInt(String.valueOf(movieStr));
-            Log.i(TAG, "Sheila convert movieId to integer");
-        } catch (Exception ex) {
-            Log.e(TAG, "Sheila ERROR:Converting Movie Id from a string to integer ~ failed");
+            movieId = movieItem.getMovieId();
+            String trailerUrl = TRAILER_REVIEW_BASE + movieId + TRAILER_PARAMETER;
+            String reviewUrl = TRAILER_REVIEW_BASE + movieId + REVIEW_APPEND;
+
+            requestQueue = Volley.newRequestQueue(getActivity());
+            gson = new Gson();
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.setDateFormat("M/d/yy hh:mm a");
+            gson = gsonBuilder.create();
+
+            fetchTrailers(trailerUrl);
+            fetchReviews(reviewUrl);
         }
-
-        imageUrl = (String) getArguments().getSerializable(ARG_MOVIE_URL);
-        movieTitleStr = (String) getArguments().getSerializable(ARG_MOVIE_TITLE);
-        releaseDateStr = (String) getArguments().getSerializable(ARG_MOVIE_RELEASE_DATE);
-        voteAverateStr = (String) getArguments().getSerializable(ARG_MOVIE_VOTE_AVERAGE);
-        overviewStr = (String) getArguments().getSerializable(ARG_MOVIE_OVERVIEW);
-        String trailerStr = (String) getArguments().getSerializable(ARG_MOVIE_TRAILER);
-        String reviewStr = (String) getArguments().getSerializable(ARG_MOVIE_REVIEW);
-
-        requestQueue = Volley.newRequestQueue(getActivity());
-        gson = new Gson();
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat("M/d/yy hh:mm a");
-        gson = gsonBuilder.create();
-
-        fetchTrailers(trailerStr);
-        fetchReviews(reviewStr);
     }
 
     @Override
