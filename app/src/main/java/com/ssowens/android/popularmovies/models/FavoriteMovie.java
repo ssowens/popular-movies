@@ -9,16 +9,6 @@ public class FavoriteMovie {
     private long movieId;
     private String poster_path;
 
-//
-//    public FavoriteMovieLoader(String voteAverage, String originalTitle, String imageUrl, String overview) {
-//        super(voteAverage, originalTitle, imageUrl, overview);
-//    }
-
-//    public FavoriteMovieLoader(long id, String poster_path) {
-//        this.movieId = id;
-//        this.poster_path = poster_path;
-//    }
-
     public long getMovieId() {
         return movieId;
     }

@@ -57,12 +57,12 @@ public class MovieGridFragment extends Fragment {
     private RequestQueue requestQueue;
     private Gson gson;
 
-    private static final String ENDPOINT = "http://api.themoviedb" +
+    public static final String ENDPOINT = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
-    private static final String TRAILER_REVIEW_BASE = "http://api.themoviedb" +
+    public static final String TRAILER_REVIEW_BASE = "http://api.themoviedb" +
             ".org/3/movie/";
-    private static final String TRAILER_PARAMETER = "/videos?api_key=" + API_KEY;
-    private static final String REVIEW_APPEND = "/reviews?api_key=" + API_KEY;
+    public static final String TRAILER_PARAMETER = "/videos?api_key=" + API_KEY;
+    public static final String REVIEW_APPEND = "/reviews?api_key=" + API_KEY;
 
     public static MovieGridFragment newInstance() {
         return new MovieGridFragment();
@@ -110,26 +110,7 @@ public class MovieGridFragment extends Fragment {
                 // Get the object at the clicked position. Will use later
                 MovieItem item = (MovieItem) parent.getItemAtPosition(position);
 
-                String imageUrl = item.getImage();
-                String movieTitle = item.getTitle();
-                String releaseDate = item.getReleaseDate();
-                String voteAverage = item.getVoteAverage();
-                String overview = item.getOverView();
-                long movieId = item.getMovieId();
-                String trailerUrl = TRAILER_REVIEW_BASE + movieId + TRAILER_PARAMETER;
-                Log.i(TAG, "trailerURL=>" + trailerUrl);
-                String reviewUrl = TRAILER_REVIEW_BASE + movieId + REVIEW_APPEND;
-                Log.i(TAG, "reviewURL=>" + reviewUrl);
-
-                Intent intent = MovieDetailActivity.newIntent(getActivity(),
-                        imageUrl,
-                        movieTitle,
-                        releaseDate,
-                        voteAverage,
-                        overview,
-                        String.valueOf(movieId),
-                        trailerUrl,
-                        reviewUrl);
+                Intent intent = MovieDetailActivity.newIntent(getActivity(), item);
                 startActivity(intent);
             }
         });
