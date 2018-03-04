@@ -57,7 +57,7 @@ public class MainActivity extends SingleFragmentActivity {
         if (isOnline()) {
             return MovieGridFragment.newInstance();
         } else {
-            Toast.makeText(this, "No Internet Service", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.no_internet_service), Toast.LENGTH_SHORT).show();
             return null;
         }
     }

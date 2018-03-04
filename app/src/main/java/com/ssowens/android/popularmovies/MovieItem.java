@@ -1,9 +1,8 @@
 package com.ssowens.android.popularmovies;
 
 import android.databinding.BindingAdapter;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
+
 import com.google.gson.annotations.SerializedName;
 import com.squareup.picasso.Picasso;
 
@@ -49,13 +48,6 @@ public class MovieItem implements Serializable {
 
     private UUID mId;
     private String reviews;
-
-    public MovieItem(String voteAverage, String originalTitle, String imageUrl, String overview) {
-        this.voteAverage = voteAverage;
-        this.originalTitle = originalTitle;
-        this.image = imageUrl;
-        this.overview = overview;
-    }
 
     public MovieItem(Long movieId) {
         this.movieId = movieId;
@@ -143,12 +135,7 @@ public class MovieItem implements Serializable {
     }
 
     public String getImageUrl() {
-        // The URL will come from the a model (i.e. Movie)
         return image;
-    }
-
-    public void onClickTrailer(View view) {
-        Log.i(TAG, "onClickTrailer");
     }
 
     @BindingAdapter({"bind.imageUrl"})

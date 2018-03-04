@@ -23,11 +23,9 @@ import java.util.List;
 public class FavoriteMovieLoader {
 
     private static final String TAG = MovieGridFragment.class.getSimpleName();
-    private static FavoriteMovieLoader sFavoriteMovieLoader;
     private Context context;
     private final SQLiteDatabase db;
     private View view;
-    private FavoriteMovieDbHelper dbHelper;
 
     public FavoriteMovieLoader(Context context, View view) {
         this.context = context.getApplicationContext();
@@ -35,9 +33,7 @@ public class FavoriteMovieLoader {
         this.view = view;
     }
 
-    //TODO Need to be able to get all movies and a single movie
     public List<MovieItem> getFavoriteMovies() {
-        Log.v(TAG, "Sheila getFavoriteMovies");
         List<MovieItem> favoriteMovieList = new ArrayList<>();
 
         FavoritesCursorWrapper cursor = queryFavoriteMovies();
@@ -58,7 +54,6 @@ public class FavoriteMovieLoader {
     }
 
     public MovieItem getFavoriteMovie(long id) {
-        Log.v(TAG, "Sheila getFavoriteMovie");
         List<MovieItem> favoriteMovieList = new ArrayList<>();
 
         FavoritesCursorWrapper cursor = queryFavoriteMovies();
@@ -76,7 +71,6 @@ public class FavoriteMovieLoader {
 
     private static ContentValues getContentValues(MovieItem movieItem) {
         ContentValues contentValues = new ContentValues();
-        //TODO add other fields
         contentValues.put(FavoriteMovieSchema.FavoriteMovieEntry.COLUMN_MOVIE_ID,
                 movieItem.getMovieId());
         contentValues.put(FavoriteMovieSchema.FavoriteMovieEntry.COLUMN_POSTER_PATH,
@@ -106,12 +100,7 @@ public class FavoriteMovieLoader {
         }
     }
 
-    public void initializeDbForReading() {
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
-    }
-
     public FavoritesCursorWrapper queryFavoriteMovies() {
-        // initializeDbForReading();
         Cursor cursor = db.query(
                 FavoriteMovieSchema.FavoriteMovieEntry.TABLE_NAME,
                 null,

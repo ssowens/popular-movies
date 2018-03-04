@@ -43,7 +43,7 @@ public class MovieGridFragment extends Fragment {
     private static final String POPULAR_MOVIES_KEY = "0";
     private static final String TOP_RATED_MOVIES_KEY = "1";
     private static final String FAVORITE_MOVIES_KEY = "2";
-    private static final String API_KEY = "f804facb811415aff9fb6ec12310e4a6";
+    private static final String API_KEY = "ADD YOUR API KEY HERE";
     public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
     public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
@@ -57,8 +57,6 @@ public class MovieGridFragment extends Fragment {
     private RequestQueue requestQueue;
     private Gson gson;
 
-    public static final String ENDPOINT = "http://api.themoviedb" +
-            ".org/3/movie/popular?api_key=" + API_KEY;
     public static final String TRAILER_REVIEW_BASE = "http://api.themoviedb" +
             ".org/3/movie/";
     public static final String TRAILER_PARAMETER = "/videos?api_key=" + API_KEY;
@@ -137,7 +135,6 @@ public class MovieGridFragment extends Fragment {
             ArrayList<MovieItem> items = new ArrayList<>();
 
             for (Movie movie : movieObject) {
-                Log.i("MovieGridFragment", movie.getMovieItems().get(0).getTitle());
                 for (int iter = 0; iter < movie.getMovieItems().size(); iter++) {
                     MovieItem eachMovie = new MovieItem();
                     eachMovie.setMovieId(movie.getMovieItems().get(iter).getMovieId());

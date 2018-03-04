@@ -1,7 +1,6 @@
 package com.ssowens.android.popularmovies;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,7 +27,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ssowens.android.popularmovies.data.FavoriteMovieLoader;
 import com.ssowens.android.popularmovies.databinding.FragmentMovieDetailBinding;
-import com.ssowens.android.popularmovies.models.Movie;
 import com.ssowens.android.popularmovies.models.MovieReview;
 import com.ssowens.android.popularmovies.models.Review;
 import com.ssowens.android.popularmovies.models.Trailer;
@@ -48,22 +45,16 @@ public class MovieDetailFragment extends Fragment {
 
     public static final String ARG_MOVIE_URL = "movie_url";
 
-    private ImageView movieImage;
-    private ImageButton playVideoBtn;
-    private TextView trailerTextView;
-
     private long movieId;
     private String imageUrl;
     private String movieTitleStr;
     private String releaseDateStr;
-    private String voteAverateStr;
+    private String voteAverageStr;
     private String overviewStr;
     private Gson gson;
     private RequestQueue requestQueue;
     private LinearLayout trailerLayout;
     private LinearLayout reviewLayout;
-    private Trailer trailer;
-    SQLiteDatabase db;
 
     public static MovieDetailFragment newInstance(MovieItem iteml) {
         Bundle args = new Bundle();
@@ -82,7 +73,7 @@ public class MovieDetailFragment extends Fragment {
             imageUrl = movieItem.getImageUrl();
             movieTitleStr = movieItem.getTitle();
             releaseDateStr = movieItem.getReleaseDate();
-            voteAverateStr = movieItem.getVoteAverage();
+            voteAverageStr = movieItem.getVoteAverage();
             overviewStr = movieItem.getOverView();
 
             movieId = movieItem.getMovieId();
@@ -116,7 +107,7 @@ public class MovieDetailFragment extends Fragment {
 
         binding.movieTitleTextView.setText(movieTitleStr);
         binding.movieOverviewTextView.setText(overviewStr);
-        binding.movieVoteAverageTextView.setText(voteAverateStr);
+        binding.movieVoteAverageTextView.setText(voteAverageStr);
         binding.movieReleaseDateTextView.setText(releaseDateStr);
 
         MaterialFavoriteButton favoriteButton = new MaterialFavoriteButton.Builder(getActivity())
@@ -135,7 +126,7 @@ public class MovieDetailFragment extends Fragment {
                 favoriteMovie.setImage(imageUrl);
                 favoriteMovie.setTitle(movieTitleStr);
                 favoriteMovie.setOverView(overviewStr);
-                favoriteMovie.setVoteAverage(voteAverateStr);
+                favoriteMovie.setVoteAverage(voteAverageStr);
                 favoriteMovie.setReleaseDate(releaseDateStr);
 
                 FavoriteMovieLoader fav = new FavoriteMovieLoader(getActivity(), getView());
@@ -179,9 +170,10 @@ public class MovieDetailFragment extends Fragment {
 
             fullReviewUrl.setClickable(true);
             fullReviewUrl.setMovementMethod(LinkMovementMethod.getInstance());
-            String link = "<a href='" + review.getUrl() + "'> Full " +
-                    "Review </a>";
-            Log.i(TAG, "link" + link);
+
+            String link = getString(R.string.link_start) +
+                    review.getUrl() +
+                    getString(R.string.link_end);
 
             content.setText(review.getContent());
             author.setText(review.getAuthor());
