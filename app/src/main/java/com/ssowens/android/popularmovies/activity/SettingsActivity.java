@@ -1,9 +1,11 @@
-package com.ssowens.android.popularmovies;
+package com.ssowens.android.popularmovies.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+
+import com.ssowens.android.popularmovies.R;
 
 /**
  * Created by Sheila Owens on 12/18/16.

@@ -21,9 +21,9 @@ public class FavoritesCursorWrapper extends CursorWrapper {
 
     public MovieItem getFavoriteMovie() {
 
-        long id = getLong(getColumnIndex(FavoriteMovieSchema.FavoriteMovieEntry
+        long id = getLong(getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry
                 .COLUMN_MOVIE_ID));
-        String poster_path = getString(getColumnIndex(FavoriteMovieSchema.FavoriteMovieEntry
+        String poster_path = getString(getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry
                 .COLUMN_POSTER_PATH));
 
         MovieItem fav = new MovieItem(id);

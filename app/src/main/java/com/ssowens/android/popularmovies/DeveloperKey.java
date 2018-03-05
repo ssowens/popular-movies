@@ -4,7 +4,7 @@ package com.ssowens.android.popularmovies;
  * Created by Sheila Owens on 1/14/18.
  */
 
-class DeveloperKey {
+public final class DeveloperKey {
 
     /**
      * Please replace this with a valid API key which is enabled for the
@@ -12,5 +12,5 @@ class DeveloperKey {
      * <a href="https://console.developers.google.com/">Google Developers Console</a>
      * to register a new developer key.
      */
-    public static final String DEVELOPER_KEY = "Add YOU DEVELOPER KEY HERE";
+    public static final String DEVELOPER_KEY = "Add developer key here";
 }

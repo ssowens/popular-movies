@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.ssowens.android.popularmovies.data.FavoriteMovieSchema.FavoriteMovieEntry;
+import static com.ssowens.android.popularmovies.data.FavoriteMovieContract.FavoriteMovieEntry;
 
 /**
  * Created by Sheila Owens on 2/25/18.
@@ -44,6 +44,8 @@ public class FavoriteMovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        // This method is for handling any updates to the database.
+        // Currently it is empty because there is only one version of the database
+        // for now.
     }
 }

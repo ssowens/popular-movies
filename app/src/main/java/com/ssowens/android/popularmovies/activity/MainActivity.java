@@ -1,4 +1,4 @@
-package com.ssowens.android.popularmovies;
+package com.ssowens.android.popularmovies.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.ssowens.android.popularmovies.MovieGridFragment;
+import com.ssowens.android.popularmovies.R;
 
 public class MainActivity extends SingleFragmentActivity {
 

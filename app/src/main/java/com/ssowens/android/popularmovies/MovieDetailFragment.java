@@ -1,5 +1,6 @@
 package com.ssowens.android.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +27,7 @@ import com.android.volley.toolbox.Volley;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ssowens.android.popularmovies.data.FavoriteMovieContract;
 import com.ssowens.android.popularmovies.data.FavoriteMovieLoader;
 import com.ssowens.android.popularmovies.databinding.FragmentMovieDetailBinding;
 import com.ssowens.android.popularmovies.models.MovieReview;
@@ -35,15 +38,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ssowens.android.popularmovies.MovieGridFragment.REVIEW_APPEND;
-import static com.ssowens.android.popularmovies.MovieGridFragment.TRAILER_PARAMETER;
-import static com.ssowens.android.popularmovies.MovieGridFragment.TRAILER_REVIEW_BASE;
+import static com.ssowens.android.popularmovies.MovieGridFragment.API_KEY;
 
 public class MovieDetailFragment extends Fragment {
 
     private static final String TAG = MovieDetailFragment.class.getSimpleName();
 
     public static final String ARG_MOVIE_URL = "movie_url";
+    private static final String TRAILER_REVIEW_BASE = "http://api.themoviedb" +
+            ".org/3/movie/";
+    private static final String TRAILER_PARAMETER = "/videos?api_key=" + API_KEY;
+    private static final String REVIEW_APPEND = "/reviews?api_key=" + API_KEY;
 
     private long movieId;
     private String imageUrl;
@@ -130,11 +135,29 @@ public class MovieDetailFragment extends Fragment {
                 favoriteMovie.setReleaseDate(releaseDateStr);
 
                 FavoriteMovieLoader fav = new FavoriteMovieLoader(getActivity(), getView());
-                fav.addFavoriteMovies(favoriteMovie);
+                addFavoriteMovies(favoriteMovie);
             }
         });
 
         return view;
+    }
+
+    public void addFavoriteMovies(MovieItem movieItem) {
+        Log.v(TAG, "addFavoriteMovies");
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID,
+                movieItem.getMovieId());
+        contentValues.put(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH,
+                movieItem.getImageUrl());
+        Uri uri = getActivity().getContentResolver().insert(FavoriteMovieContract.FavoriteMovieEntry
+                .CONTENT_URI, contentValues);
+
+        if (uri != null) {
+            Toast.makeText(getActivity(), R.string.favorite_added, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getActivity(), R.string.duplicate_favorite, Toast.LENGTH_LONG).show();
+        }
     }
 
     public void appendTrailers(List<MovieVideo> trailers) {
@@ -195,6 +218,7 @@ public class MovieDetailFragment extends Fragment {
         public void onClick(View v) {
             getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl)));
         }
+
     }
 
     private void fetchTrailers(String endPoint) {

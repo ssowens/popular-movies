@@ -23,6 +23,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ssowens.android.popularmovies.activity.MovieDetailActivity;
 import com.ssowens.android.popularmovies.data.FavoriteMovieLoader;
 import com.ssowens.android.popularmovies.models.Movie;
 
@@ -43,24 +44,19 @@ public class MovieGridFragment extends Fragment {
     private static final String POPULAR_MOVIES_KEY = "0";
     private static final String TOP_RATED_MOVIES_KEY = "1";
     private static final String FAVORITE_MOVIES_KEY = "2";
-    private static final String API_KEY = "ADD YOUR API KEY HERE";
+    public static final String API_KEY = "ADD API KEY HERE";
     public static final String POPULAR_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/popular?api_key=" + API_KEY;
     public static final String TOP_RATED_MOVIE_URL = "http://api.themoviedb" +
             ".org/3/movie/top_rated?api_key=" + API_KEY;
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
     private GridViewAdapter gridAdapter;
-    public ArrayList<MovieItem> gridData = new ArrayList<>();
-    public List<MovieItem> movieFav = new ArrayList<>();
-    public ActionBar actionBar;
+    private ArrayList<MovieItem> gridData = new ArrayList<>();
+    private List<MovieItem> movieFav = new ArrayList<>();
+    private ActionBar actionBar;
     private String title;
     private RequestQueue requestQueue;
     private Gson gson;
-
-    public static final String TRAILER_REVIEW_BASE = "http://api.themoviedb" +
-            ".org/3/movie/";
-    public static final String TRAILER_PARAMETER = "/videos?api_key=" + API_KEY;
-    public static final String REVIEW_APPEND = "/reviews?api_key=" + API_KEY;
 
     public static MovieGridFragment newInstance() {
         return new MovieGridFragment();
